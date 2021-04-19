@@ -24,6 +24,7 @@ import config as cf
 import sys
 import controller
 from DISClib.ADT import list as lt
+import time
 assert cf
 
 
@@ -49,7 +50,16 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-
+        t1 = time.process_time()
+        cont = controller.loadData()
+        t2 = time.process_time()
+        time_mseg = (t2 - t1)*1000
+        print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
+        print('Eventos cargados: ' + str(controller.crimesSize(cont)))
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
     elif int(inputs[0]) == 2:
         pass
 

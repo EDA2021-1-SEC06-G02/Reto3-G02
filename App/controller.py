@@ -33,6 +33,49 @@ El controlador se encarga de mediar entre la vista y el modelo.
 
 # Funciones para la carga de datos
 
+def loadData():
+    File = "context_content_features-small.csv"
+    MusicRecomender = model.newMusicRecomender()
+    File = cf.data_dir + File
+    input_file = csv.DictReader(open(File, encoding="utf-8"), delimiter=",")
+    for Entry in input_file:
+        model.addEventoEscucha(MusicRecomender, Entry)
+    return MusicRecomender
+
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+
+def crimesSize(analyzer):
+    """
+    Numero de crimenes leidos
+    """
+    return model.crimesSize(analyzer)
+
+
+def indexHeight(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight(analyzer)
+
+
+def indexSize(analyzer):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.indexSize(analyzer)
+
+
+def minKey(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKey(analyzer)
+
+
+def maxKey(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKey(analyzer)
