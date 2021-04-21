@@ -37,8 +37,9 @@ operación solicitada
 
 def printMenu():
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
+    print("1- Cargar datos al catálogo")
     print("2- ")
+    print("3- Cargar datos Requerimiento 1")
 
 catalog = None
 
@@ -50,8 +51,15 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-        t1 = time.process_time()
         cont = controller.loadData()
+
+    elif int(inputs[0]) == 2:
+        pass
+    
+    elif int(inputs[0]) == 3:
+        CaracContenido = input("Ingrese la característica de contenido que desea consultar:      ")
+        t1 = time.process_time()
+        cont = controller.addData(cont,CaracContenido)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
@@ -60,9 +68,6 @@ while True:
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
-    elif int(inputs[0]) == 2:
-        pass
-
     else:
         sys.exit(0)
 sys.exit(0)

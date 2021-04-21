@@ -45,65 +45,60 @@ los mismos.
 def newMusicRecomender():
     MusicRecomender = {'EventosEscucha': None, 'Carac': None}
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', compareIds)
-    #MusicRecomender['Caracs'] = m.newMap(numelements=9, maptype='PROBING', comparefunction=compareCarac)
-    MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    #MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     return MusicRecomender
 
-def newCaracEntry(EventoEscucha):
-    entry = {'CaracCont': None, 'lstEvenEscu': None}
-    #entry['CaracCont'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
-    entry['CaracCont'] = m.newMap(numelements=7, maptype='PROBING', comparefunction=compareValues)
-    entry['lstEvenEscu'] = lt.newList('ARRAY_LIST', compareValues)
+def newArtistEntry(EventoEscucha):
+    entry = {'Artisits': None, 'lstArtisits': None}
+    #entry['Artisits'] = m.newMap(numelements=10000, maptype='PROBING', loadfactor=0.5, comparefunction=compareArtist)
+    entry['lstArtisits'] = lt.newList('ARRAY_LIST', compareValues)
     return entry
 
-
-"""def newCaracContEntry(CaracContgrp, EventoEscucha):
-    Caraentry = {'CaracContenido': None, 'lstCaracCont': None}
-    Caraentry['CaracContenido'] = CaracContgrp
-    Caraentry['lstCaracCont'] = lt.newList('ARRAY_LIST')
-    return Caraentry"""
-
-Valores=lt.newList('ARRAY_LIST')
-lt.addLast(Valores,'instrumentalness')
-lt.addLast(Valores,'Acousticness')
-lt.addLast(Valores,'Liveness')
-lt.addLast(Valores,'Speechiness')
-lt.addLast(Valores,'Energy')
-lt.addLast(Valores,'Danceability')
-lt.addLast(Valores,'Valence')
-lt.addLast(Valores,'Tempo')
+def newArtistSingularEntry(id, EventoEscucha):
+    Caraentry = {'ArtisitSingular': None, 'lstSongsArtist': None}
+    Caraentry['ArtisitSingular'] = id
+    Caraentry['lstSongsArtist'] = lt.newList('ARRAY_LIST')
+    return Caraentry
 
 # Funciones para agregar informacion al catalogo
 
 def addEventoEscucha(MusicRecomender, EventoEscucha):
     lt.addLast(MusicRecomender['EventosEscucha'], EventoEscucha)
-    updateCaracIndex(MusicRecomender['Caracs'], EventoEscucha)
     return MusicRecomender
 
-def updateCaracIndex(map, EventoEscucha):
-    value = float(EventoEscucha['instrumentalness'])
+def addEventosRBT(MusicRecomender,tipoCaraCont):
+    MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    i=1
+    while i<=lt.size(MusicRecomender['EventosEscucha']):
+        EventoEscucha = lt.getElement(MusicRecomender['EventosEscucha'],i)
+        updateCaracIndex(MusicRecomender['Caracs'], EventoEscucha,tipoCaraCont)
+        i+=1
+    return MusicRecomender
+
+def updateCaracIndex(map, EventoEscucha,tipoCaraCont):
+    value = float(EventoEscucha[tipoCaraCont])
     entry = om.get(map, value)
     if entry is None:
-        Caraentry = newCaracEntry(EventoEscucha)
-        om.put(map, value, Caraentry)
+        Artistentry = newArtistEntry(EventoEscucha)
+        om.put(map, value, Artistentry)
     else:
-        Caraentry = me.getValue(entry)
-    addDateIndex(Caraentry, EventoEscucha)
+        Artistentry = me.getValue(entry)
+    addArtisitIndex(Artistentry, EventoEscucha)
     return map
 
-def addDateIndex(CaracEntry, EventoEscucha):
-    lst = CaracEntry['lstEvenEscu']
+def addArtisitIndex(Artistentry, EventoEscucha):
+    lst = Artistentry['lstArtisits']
     lt.addLast(lst, EventoEscucha)
-    """CaracIndex = CaracEntry['CaracCont']
-    Carentry = m.get(CaracIndex, EventoEscucha['instrumentalness'])
-    if (Carentry is None):
-        entry = newCaracContEntry(EventoEscucha['instrumentalness'], EventoEscucha)
-        lt.addLast(entry['lstCaracCont'], EventoEscucha)
-        m.put(CaracIndex, EventoEscucha['instrumentalness'], entry)
+    """ArtisitIndex = Artistentry['Artisits']
+    Arentry = m.get(ArtisitIndex, EventoEscucha['artist_id'])
+    if (Arentry is None):
+        entry = newArtistSingularEntry(EventoEscucha['artist_id'], EventoEscucha)
+        lt.addLast(entry['lstSongsArtist'], EventoEscucha)
+        m.put(ArtisitIndex, EventoEscucha['artist_id'], entry)
     else:
-        entry = me.getValue(Carentry)
-        lt.addLast(entry['lstCaracCont'], EventoEscucha)"""
-    return CaracEntry
+        entry = me.getValue(Arentry)
+        lt.addLast(entry['lstSongsArtist'], EventoEscucha)"""
+    return Artistentry
 
 
 # Funciones de consulta
@@ -170,11 +165,11 @@ def compareValues(value1, value2):
         return -1
 
 
-def compareCarac(Carac1, Carac2):
-    Caract = me.getKey(Carac2)
-    if (Carac1 == Caract):
+def compareArtist(Artist1, Artist2):
+    Artist = me.getKey(Artist2)
+    if (Artist1 == Artist):
         return 0
-    elif (Carac1 > Caract):
+    elif (Artist1 > Artist):
         return 1
     else:
         return -1

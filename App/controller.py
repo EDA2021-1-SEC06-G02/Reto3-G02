@@ -41,7 +41,9 @@ def loadData():
     for Entry in input_file:
         model.addEventoEscucha(MusicRecomender, Entry)
     return MusicRecomender
-
+    
+def addData(MusicRecomender,CaracContenido):
+    return model.addEventosRBT(MusicRecomender, CaracContenido)
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
