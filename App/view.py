@@ -51,7 +51,7 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
-        cont = controller.loadData()
+        catalog = controller.loadData()
 
     elif int(inputs[0]) == 2:
         pass
@@ -59,15 +59,15 @@ while True:
     elif int(inputs[0]) == 3:
         CaracContenido = input("Ingrese la característica de contenido que desea consultar:      ")
         t1 = time.process_time()
-        cont = controller.addData(cont,CaracContenido)
+        catalog = controller.addData(catalog,CaracContenido)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print('Eventos cargados: ' + str(controller.crimesSize(cont)))
-        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
-        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
-        print('Menor Llave: ' + str(controller.minKey(cont)))
-        print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        print('Eventos cargados: ' + str(controller.crimesSize(catalog)))
+        print('Altura del arbol: ' + str(controller.indexHeight(catalog)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(catalog)))
+        print('Menor Llave: ' + str(controller.minKey(catalog)))
+        print('Mayor Llave: ' + str(controller.maxKey(catalog)))
     else:
         sys.exit(0)
 sys.exit(0)

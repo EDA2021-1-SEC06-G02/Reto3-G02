@@ -45,7 +45,6 @@ los mismos.
 def newMusicRecomender():
     MusicRecomender = {'EventosEscucha': None, 'Carac': None}
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', compareIds)
-    #MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     return MusicRecomender
 
 def newArtistEntry(EventoEscucha):
