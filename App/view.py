@@ -100,7 +100,7 @@ while True:
         CaracContenido = CambioDeValores(CaracContenido)
         Requerimiento = 1
         t1 = time.process_time()
-        catalog = controller.addData(catalog,CaracContenido,Requerimiento,initialInfo,finalInfo)
+        catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo,CaracContenido)
         totalEvento,TotalArtist = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
