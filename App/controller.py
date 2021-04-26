@@ -42,42 +42,29 @@ def loadData():
         model.addEventoEscucha(MusicRecomender, Entry)
     return MusicRecomender
     
-def addData(MusicRecomender,CaracContenido):
-    return model.addEventosRBT(MusicRecomender, CaracContenido)
+def addData(MusicRecomender,Requerimiento,limInf=0,LimDer=1,CaracContenido="instrumentalness"):
+    return model.addEventosRBT(MusicRecomender,Requerimiento,CaracContenido,limInf,LimDer)
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
 
-def crimesSize(analyzer):
-    """
-    Numero de crimenes leidos
-    """
-    return model.crimesSize(analyzer)
+def getEventosEscuchaByRange(analyzer, initialInfo, finalInfo):
+    return model.getEventosByRange(analyzer,initialInfo,finalInfo)
+
+def EventosEscuchaSize(MusicRecomender):
+    return model.EventosEscuchaSize(MusicRecomender)
+
+def indexHeight(MusicRecomender):
+    return model.indexHeight(MusicRecomender)
 
 
-def indexHeight(analyzer):
-    """
-    Altura del indice (arbol)
-    """
-    return model.indexHeight(analyzer)
+def indexSize(MusicRecomender):
+    return model.indexSize(MusicRecomender)
 
 
-def indexSize(analyzer):
-    """
-    Numero de nodos en el arbol
-    """
-    return model.indexSize(analyzer)
+def minKey(MusicRecomender):
+    return model.minKey(MusicRecomender)
 
 
-def minKey(analyzer):
-    """
-    La menor llave del arbol
-    """
-    return model.minKey(analyzer)
-
-
-def maxKey(analyzer):
-    """
-    La mayor llave del arbol
-    """
-    return model.maxKey(analyzer)
+def maxKey(MusicRecomender):
+    return model.maxKey(MusicRecomender)
