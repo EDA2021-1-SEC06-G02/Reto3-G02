@@ -43,7 +43,7 @@ los mismos.
 # Funciones para creacion de datos
 
 def newMusicRecomender():
-    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artist':None}
+    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None}
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
     return MusicRecomender
 

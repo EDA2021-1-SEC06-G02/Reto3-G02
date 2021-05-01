@@ -34,30 +34,121 @@ Presenta el menu de opciones y por cada seleccion
 se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
-def CambioDeValores(CaracContenido):
-    if CaracContenido==1:
-        return "instrumentalness"
-    elif CaracContenido==2:
-        return "liveness"
-    elif CaracContenido==3:
-        return "speechiness"
-    elif CaracContenido==4:
-        return "danceability"
-    elif CaracContenido==5:
-        return "valence"
-    elif CaracContenido==6:
-        return "loudness"
-    elif CaracContenido==7:
-        return "tempo"
-    elif CaracContenido==8:
-        return "acousticness"
-    elif CaracContenido==9:
-        return "energy"
-    elif CaracContenido==10:
-        return "mode"
-    elif CaracContenido==11:
-        return "key"
+def CambioDeValores(CaracContenido,Requerimiento,CadenaResultado=""):
+    CadenaResultado
+    if Requerimiento==1:
+        if CaracContenido==1:
+            CadenaResultado = "instrumentalness"
+        elif CaracContenido==2:
+            CadenaResultado = "liveness"
+        elif CaracContenido==3:
+            CadenaResultado = "speechiness"
+        elif CaracContenido==4:
+            CadenaResultado = "danceability"
+        elif CaracContenido==5:
+            CadenaResultado = "valence"
+        elif CaracContenido==6:
+            CadenaResultado = "loudness"
+        elif CaracContenido==7:
+            CadenaResultado = "tempo"
+        elif CaracContenido==8:
+            CadenaResultado = "acousticness"
+        elif CaracContenido==9:
+            CadenaResultado = "energy"
+        elif CaracContenido==10:
+            CadenaResultado = "mode"
+        elif CaracContenido==11:
+            CadenaResultado = "key"
+    elif Requerimiento==4:
+        if CaracContenido==1:
+            if not("Reggae" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Reggae"
+        elif CaracContenido==2:
+            if not("Down-tempo" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Down-tempo"
+        elif CaracContenido==3:
+            if not("Chill-out" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Chill-out"
+        elif CaracContenido==4:
+            if not("Hip-hop" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Hip-hop"
+        elif CaracContenido==5:
+            if not("Jazz and Funk" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Jazz and Funk"
+        elif CaracContenido==6:
+            if not("Pop" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Pop"
+        elif CaracContenido==7:
+            if not("R&B" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"R&B"
+        elif CaracContenido==8:
+            if not("Rock" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Rock"
+        elif CaracContenido==9:
+            if not("Metal" in CadenaResultado):
+                if not(CadenaResultado==""):
+                    CadenaResultado = CadenaResultado+", "
+                CadenaResultado = CadenaResultado+"Metal"
+    return CadenaResultado
 
+def ValoresGeneros(genero):
+    Min=0
+    Max=0
+    if genero=="Reggae":
+        Min=60
+        Max=90
+    elif genero=="Down-tempo":
+        Min=70
+        Max=100
+    elif genero=="Chill-out":
+        Min=90
+        Max=120
+    elif genero=="Hip-hop":
+        Min=85
+        Max=115
+    elif genero=="Jazz and Funk":
+        Min=120
+        Max=125
+    elif genero=="Pop":
+        Min=100
+        Max=130
+    elif genero=="R&B,":
+        Min=60
+        Max=80
+    elif genero=="Rock":
+        Min=110
+        Max=140
+    elif genero=="Metal":
+        Min=100
+        Max=160
+    return Min,Max
+
+def Requerimiento4(catalog,Requerimiento,CaracContenido):
+    Generos = CaracContenido.split(",")
+    i=0
+    while i<len(Generos):
+        Min,Max=ValoresGeneros(Generos[i].strip())
+        catalog = controller.addData(catalog,Requerimiento,Min,Max)
+        totalEvento,TotalArtist = controller.getEventosEscuchaByRange(catalog, Min, Max)
+        print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
+        print("\nTotal de Artistas en el rango dado: ",TotalArtist)
+        i+=1
 
 def printMenu():
     print("Bienvenido")
@@ -81,6 +172,7 @@ while True:
         catalog = controller.loadData()
 
     elif int(inputs[0]) == 2:
+        Requerimiento = 1
         CaracContenido = 0
         while CaracContenido>11 or  CaracContenido<1:
             print("1- instrumentalness")
@@ -97,16 +189,13 @@ while True:
             CaracContenido = int(input("Seleccione la característica de contenido que desea consultar:      "))
         initialInfo = float(input("Rango inferior: "))
         finalInfo = float(input("Rango superior: "))
-        CaracContenido = CambioDeValores(CaracContenido)
-        Requerimiento = 1
+        CaracContenido = CambioDeValores(CaracContenido,Requerimiento)
         t1 = time.process_time()
         catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo,CaracContenido)
         totalEvento,TotalArtist = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
-        print("\nTotal de Artistas en el rango dado: ",TotalArtist)
     
     elif int(inputs[0]) == 3:
         pass
@@ -115,7 +204,9 @@ while True:
         pass        
 
     elif int(inputs[0]) == 5:
+        Requerimiento = 4
         verifica=True
+        CadenaResultado=""
         while verifica:
             print("1- Reggae")
             print("2- Down-tempo")
@@ -126,23 +217,24 @@ while True:
             print("7- R&B")
             print("8- Rock")
             print("9- Metal")
-            print("11- Escribirlo Manualmente")
-            GenerosConsultaID = int(input("Seleccione la característica de contenido que desea consultar:      "))
+            print("10- Escribirlo Manualmente")
+            GenerosConsultaID = int(input("Seleccione el género que desea consultar:      "))
+            if CadenaResultado=="":
+                CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento)
+            else:
+                CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento,CadenaResultado)
+            print("Estos son los géneros que desea consultar por el momento: ",CadenaResultado)
             print("¿Desea Agregar otro genero para consultar?:      ")
             print("1- SI")
             print("2- NO")
             Preseguir=int(input("Ingrese su selección:      "))
             if Preseguir==2:
                 verifica=False
-        Requerimiento = 4
         t1 = time.process_time()
-        catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo)
-        totalEvento,TotalArtist = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo)
+        Requerimiento4(catalog,Requerimiento,CadenaResultado)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
-        print("\nTotal de Artistas en el rango dado: ",TotalArtist)
 
     elif int(inputs[0]) == 6:
         pass
