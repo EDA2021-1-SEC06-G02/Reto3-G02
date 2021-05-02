@@ -54,6 +54,9 @@ def addData2(MusicRecomender,catalog2,Requerimiento,limInf=0,LimDer=1,CaracConte
 def getEventosEscuchaByRange(analyzer, initialInfo, finalInfo):
     return model.getEventosByRange(analyzer,initialInfo,finalInfo)
 
+def getEventosEscuchaByRange2(analyzer, initialInfo, finalInfo):
+    return model.getEventosByRange2(analyzer,initialInfo,finalInfo)
+
 def EventosEscuchaSize(MusicRecomender):
     return model.EventosEscuchaSize(MusicRecomender)
 
