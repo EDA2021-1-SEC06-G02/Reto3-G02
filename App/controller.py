@@ -44,6 +44,9 @@ def loadData():
     
 def addData(MusicRecomender,Requerimiento,limInf=0,LimDer=1,CaracContenido="instrumentalness"):
     return model.addEventosRBT(MusicRecomender,Requerimiento,CaracContenido,limInf,LimDer)
+
+def addData2(MusicRecomender,catalog2,Requerimiento,limInf=0,LimDer=1,CaracContenido="instrumentalness"):
+    return model.addEventosRBT2(MusicRecomender,catalog2,Requerimiento,CaracContenido,limInf,LimDer)
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
