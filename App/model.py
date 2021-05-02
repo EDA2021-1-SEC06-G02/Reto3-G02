@@ -150,6 +150,14 @@ def maxKey(analyzer):
 
 def getEventosByRange(analyzer, initialInfo, finalInfo):
     lst = om.values(analyzer['Caracs'], initialInfo+0.0000000001, finalInfo-0.0000000001)
+    totEvent = 0
+    for lstEvent in lt.iterator(lst):
+        totEvent += lt.size(lstEvent['lstEvent'])          
+    sizeTabla= lt.size(m.keySet(analyzer['Artists']))
+    return totEvent,sizeTabla,lst
+
+def getEventosByRange2(analyzer, initialInfo, finalInfo):
+    lst = om.values(analyzer['Caracs'], initialInfo+0.0000000001, finalInfo-0.0000000001)
     lista1 = lt.newList('ARRAY_LIST')
     lista2 = lt.newList('ARRAY_LIST')
     for lstEvent in lt.iterator(lst):
@@ -157,9 +165,9 @@ def getEventosByRange(analyzer, initialInfo, finalInfo):
             if lt.isPresent(lista1,evento["track_id"])==0:
                 lt.addLast(lista1,evento["track_id"])
                 lt.addLast(lista2,evento)
-    totEvens = lt.size(lista2)
+    totEvent = lt.size(lista2)
     sizeTabla= lt.size(m.keySet(analyzer['Artists']))
-    return totEvens,sizeTabla,lista2
+    return totEvent,sizeTabla,lista2
 
 # Funciones de ordenamiento
 

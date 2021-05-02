@@ -215,6 +215,8 @@ while True:
         Requerimiento = 1
         CaracContenido = 0
         while CaracContenido>11 or  CaracContenido<1:
+            print(" ")
+            print("===Caracteristicas de Contenido===")
             print("1- instrumentalness")
             print("2- liveness")
             print("3- speechiness")
@@ -235,6 +237,7 @@ while True:
         totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
+        print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
         print("Total Eventos Reproducción:",totalEvento)
         print("Total Artistas Unicos:",totalArtist)
@@ -254,7 +257,7 @@ while True:
         catalog = controller.addData(catalog,Requerimiento,limInfInstru,limSupInstru,"instrumentalness")
         catalog2 = {"Caracs": catalog['Caracs']}
         catalog = controller.addData2(catalog,catalog2,Requerimiento,limInfTempo,limSupTempo,"tempo")
-        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, limInfTempo, limSupTempo)
+        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange2(catalog, limInfTempo, limSupTempo)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print(" ")
