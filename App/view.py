@@ -196,6 +196,8 @@ while True:
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
+        print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
+        print("\nTotal de Artistas en el rango dado: ",TotalArtist)
     
     elif int(inputs[0]) == 3:
         pass
