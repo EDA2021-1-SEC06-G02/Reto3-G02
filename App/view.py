@@ -23,6 +23,7 @@
 import config as cf
 import sys
 import controller
+import random as ran
 from DISClib.ADT import list as lt
 import time
 assert cf
@@ -150,7 +151,46 @@ def Requerimiento4(catalog,Requerimiento,CaracContenido):
         print("\nTotal de Artistas en el rango dado: ",TotalArtist)
         i+=1
 
+def printPistas(lista, Requerimiento):
+    formato_1 = "Track {}: {} con instrumentalness de {} y tempo de {}"
+    formato_2 = "Track {}: {} con energy de {} y danceability de {}"
+    if (lt.size(lista) <= 5):
+        i = 1
+        while i <= lt.size(lista):
+            track_id = lt.getElement(lista,i)["track_id"]
+            if(Requerimiento == 2):
+                ener = lt.getElement(lista,i)["energy"]
+                dance = lt.getElement(lista,i)["danceability"]
+                print(formato_2.format(i,track_id,ener,dance))
+            if(Requerimiento == 3):
+                instru = lt.getElement(lista,i)["instrumentalness"]
+                tempo = lt.getElement(lista,i)["tempo"]
+                print(formato_1.format(i,track_id,instru,tempo))
+            i += 1
+    else:
+        numeros = []
+        while len(numeros) != 5:
+            numero = ran.randint(1,lt.size(lista))
+            if not(numero in numeros):
+                numeros.append(numero)
+        i = 1
+        while i <= len(numeros):
+            track_id = lt.getElement(lista,numeros[i-1])["track_id"]
+            if(Requerimiento == 2):
+                ener = lt.getElement(lista,i)["energy"]
+                dance = lt.getElement(lista,i)["danceability"]
+                print(formato_2.format(i,track_id,ener,dance))
+            if(Requerimiento == 3):
+                instru = lt.getElement(lista,numeros[i-1])["instrumentalness"]
+                tempo = lt.getElement(lista,numeros[i-1])["tempo"]
+                print(formato_1.format(i,track_id,instru,tempo))
+            i += 1
+    
+    
+
+
 def printMenu():
+    print(" ")
     print("Bienvenido")
     print("1- Cargar datos al catálogo")
     print("2- Requerimiento 1")
@@ -175,6 +215,8 @@ while True:
         Requerimiento = 1
         CaracContenido = 0
         while CaracContenido>11 or  CaracContenido<1:
+            print(" ")
+            print("===Caracteristicas de Contenido===")
             print("1- instrumentalness")
             print("2- liveness")
             print("3- speechiness")
@@ -192,18 +234,42 @@ while True:
         CaracContenido = CambioDeValores(CaracContenido,Requerimiento)
         t1 = time.process_time()
         catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo,CaracContenido)
-        totalEvento,TotalArtist = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo)
+        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
+        print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
+<<<<<<< HEAD
         print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
         print("\nTotal de Artistas en el rango dado: ",TotalArtist)
+=======
+        print("Total Eventos Reproducción:",totalEvento)
+        print("Total Artistas Unicos:",totalArtist)
+>>>>>>> 6a0aa8bc66d2915a787ccfe003d9bd0c9aa7ff9b
     
     elif int(inputs[0]) == 3:
         pass
 
     elif int(inputs[0]) == 4:
-        pass        
+        print("***Ingrese el rango de Instrumentalness:")
+        limInfInstru = float(input("Rango inferior: "))
+        limSupInstru = float(input("Rango superior: "))
+        print("***Ingrese el rango de Tempo:")
+        limInfTempo = float(input("Rango inferior: "))
+        limSupTempo = float(input("Rango superior: "))
+        Requerimiento = 3
+        t1 = time.process_time()
+        catalog = controller.addData(catalog,Requerimiento,limInfInstru,limSupInstru,"instrumentalness")
+        catalog2 = {"Caracs": catalog['Caracs']}
+        catalog = controller.addData2(catalog,catalog2,Requerimiento,limInfTempo,limSupTempo,"tempo")
+        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange2(catalog, limInfTempo, limSupTempo)
+        t2 = time.process_time()
+        time_mseg = (t2 - t1)*1000
+        print(" ")
+        print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
+        print("Total Eventos Unicos:",totalEvento)
+        print("----Tracks---")
+        printPistas(lista,Requerimiento)
 
     elif int(inputs[0]) == 5:
         Requerimiento = 4
