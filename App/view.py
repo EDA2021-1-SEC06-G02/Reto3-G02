@@ -239,13 +239,8 @@ while True:
         time_mseg = (t2 - t1)*1000
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-<<<<<<< HEAD
-        print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
-        print("\nTotal de Artistas en el rango dado: ",TotalArtist)
-=======
         print("Total Eventos Reproducción:",totalEvento)
         print("Total Artistas Unicos:",totalArtist)
->>>>>>> 6a0aa8bc66d2915a787ccfe003d9bd0c9aa7ff9b
     
     elif int(inputs[0]) == 3:
         pass

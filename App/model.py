@@ -120,16 +120,8 @@ def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento,
         EventEntry = newEventEntry()
     else:
         EventEntry = me.getValue(entry)
-<<<<<<< HEAD
     #addIDUniqueEvent(MapID,EventoEscucha)
     addEventIndex(Artists, EventoEscucha)
-=======
-    addEventIndex(Artists,EventEntry, EventoEscucha)
-    om.put(MusicRecomender['Caracs'], value, EventEntry)
-    return MusicRecomender['Caracs']
-
-def addEventIndex(Artists,EventEntry, EventoEscucha):
->>>>>>> 6a0aa8bc66d2915a787ccfe003d9bd0c9aa7ff9b
     lst = EventEntry['lstEvent']
     lt.addLast(lst, EventoEscucha)
     return MusicRecomender['Caracs']
