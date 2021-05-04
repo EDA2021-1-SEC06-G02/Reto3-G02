@@ -121,16 +121,21 @@ def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento,
     else:
         EventEntry = me.getValue(entry)
     #addIDUniqueEvent(MapID,EventoEscucha)
-    addEventIndex(Artists, EventoEscucha)
-    lst = EventEntry['lstEvent']
-    lt.addLast(lst, EventoEscucha)
+    addEventIndex(Artists,EventEntry, EventoEscucha)
+    om.put(MusicRecomender['Caracs'], value, EventEntry)
     return MusicRecomender['Caracs']
 
-def addEventIndex(Artists, EventoEscucha):
+def addEventIndex(Artists,EventEntry, EventoEscucha):
+    return MusicRecomender['Caracs']
+
+def addEventIndex(Artists,EventEntry,EventoEscucha):
+    lst=EventEntry['lstEvent']
+    lt.addLast(lst, EventoEscucha)
     Arentry = m.get(Artists, EventoEscucha['artist_id'])
     if (Arentry is None):
         entry = newArtistEntry(EventoEscucha['artist_id'])
         m.put(Artists, EventoEscucha['artist_id'], entry)
+    return EventEntry
 
 def addIDUniqueEvent(MapID,EventoEscucha):
     IDentry = m.get(MapID, EventoEscucha['id'])
@@ -142,7 +147,7 @@ def Requerimiento2(MusicRecomender,LimInf1,LimSup1,LimInf2,LimSup2):
     i=1
     while i<=lt.size(MusicRecomender['EventosEscucha']):
         EventoEscucha = lt.getElement(MusicRecomender['EventosEscucha'],i)
-        if EventoEscucha[]
+        #if EventoEscucha[]
         i+=1
     return MusicRecomender
 
