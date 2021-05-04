@@ -175,12 +175,15 @@ def maxKey(analyzer):
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
-def getEventosByRange(analyzer, initialInfo, finalInfo):
+def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
     totEvent = 0
     for lstEvent in lt.iterator(lst):
         totEvent += lt.size(lstEvent['lstEvent'])          
     sizeTabla= lt.size(m.keySet(analyzer['Artists']))
+    if Requerimiento != 1:
+        lst = m.keySet(analyzer['Artists'])
+        return totEvent,sizeTabla,lst
     return totEvent,sizeTabla,lst
 
 def getEventosByRange2(analyzer, initialInfo, finalInfo):

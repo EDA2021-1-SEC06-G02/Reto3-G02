@@ -106,10 +106,24 @@ def CambioDeValores(CaracContenido,Requerimiento,CadenaResultado=""):
                 if not(CadenaResultado==""):
                     CadenaResultado = CadenaResultado+", "
                 CadenaResultado = CadenaResultado+"Metal"
+        elif CaracContenido==10:
+            nombre1 = input("Ingrese el nombre del genero: ").strip()
+            nombre2 = nombre1.strip().lower()
+            if nombre2 in valores_generos:
+                if not(nombre1 in CadenaResultado):
+                    if not(CadenaResultado==""):
+                        CadenaResultado = CadenaResultado+", "
+                    CadenaResultado = CadenaResultado+nombre1
+            else: 
+                print("El genero ingresado no existe\n")
     return CadenaResultado
 
-def ValoresGeneros(genero):
-    Min=0
+def ValoresGeneros(genero,generos={}):
+    #Cambiar a tabla de Hash
+    genero = genero.lower()
+    Min = generos[genero]["min"]
+    Max = generos[genero]["max"]
+    """Min=0
     Max=0
     if genero=="Reggae":
         Min=60
@@ -129,7 +143,7 @@ def ValoresGeneros(genero):
     elif genero=="Pop":
         Min=100
         Max=130
-    elif genero=="R&B,":
+    elif genero=="R&B":
         Min=60
         Max=80
     elif genero=="Rock":
@@ -137,18 +151,23 @@ def ValoresGeneros(genero):
         Max=140
     elif genero=="Metal":
         Min=100
-        Max=160
+        Max=160"""
     return Min,Max
+
+def CrearNuevoGenero(generos,nombre,Min,Max):
+    
+    nombre = nombre.lower()
+    generos[nombre] = {"min":Min,"max":Max}
+    
 
 def Requerimiento4(catalog,Requerimiento,CaracContenido):
     Generos = CaracContenido.split(",")
     i=0
     while i<len(Generos):
-        Min,Max=ValoresGeneros(Generos[i].strip())
+        Min,Max=ValoresGeneros(Generos[i].strip(),valores_generos)
         catalog = controller.addData(catalog,Requerimiento,Min,Max)
-        totalEvento,TotalArtist = controller.getEventosEscuchaByRange(catalog, Min, Max)
-        print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
-        print("\nTotal de Artistas en el rango dado: ",TotalArtist)
+        totalEvento,TotalArtist,lista = controller.getEventosEscuchaByRange(catalog, Min, Max,Requerimiento)
+        printArtistas(lista,Generos[i].strip(),TotalArtist,totalEvento)
         i+=1
 
 def printPistas(lista, Requerimiento):
@@ -186,8 +205,18 @@ def printPistas(lista, Requerimiento):
                 print(formato_1.format(i,track_id,instru,tempo))
             i += 1
     
-    
-
+def printArtistas(lista,genero,artistas,eventos):
+    formato_1 = "Reproducciones de {}: {} con {} artistas unicos"
+    formato_2 = "_______Algunos artistas de {}_______"
+    formato_3 = "Artista {}: {}"
+    print(formato_1.format(genero,eventos,artistas))
+    print(formato_2.format(genero))
+    i = 1
+    while i <= 10:
+        artista_id = lt.getElement(lista,i)
+        print(formato_3.format(i,artista_id))
+        i +=1
+    print(" ")
 
 def printMenu():
     print(" ")
@@ -200,6 +229,8 @@ def printMenu():
     print("6- Requerimiento 5")
 
 catalog = None
+#Cambiar a tabla de Hash
+valores_generos = {"reggae":{"min":60,"max":90}, "down-tempo":{"min":70,"max":100}, "chill-out":{"min":90,"max":120}, "hip-hop":{"min":85,"max":115}, "jazz and funk":{"min":120,"max":125}, "pop":{"min":100,"max":130}, "r&b":{"min":60,"max":80}, "rock":{"min":110,"max":140}, "metal":{"min":100,"max":160}}
 
 """
 Menu principal
@@ -271,7 +302,7 @@ while True:
         verifica=True
         CadenaResultado=""
         while verifica:
-            print("1- Reggae")
+            print("\n1- Reggae")
             print("2- Down-tempo")
             print("3- Chill-out")
             print("4- Hip-hop")
@@ -281,12 +312,23 @@ while True:
             print("8- Rock")
             print("9- Metal")
             print("10- Escribirlo Manualmente")
+            print("11- Crear Nuevo Genero")
             GenerosConsultaID = int(input("Seleccione el género que desea consultar:      "))
-            if CadenaResultado=="":
-                CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento)
+            print(" ")
+            if GenerosConsultaID == 11:
+                #Cambiar a tabla de Hash
+                print("______Crear Nuevo Genero______")
+                nombre = input("Nombre: ")
+                Min = float(input("Tempo Minimo: "))
+                Max = float(input("Tempo Maximo: "))
+                CrearNuevoGenero(valores_generos,nombre,Min,Max)
+                
             else:
-                CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento,CadenaResultado)
-            print("Estos son los géneros que desea consultar por el momento: ",CadenaResultado)
+                if CadenaResultado=="":
+                    CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento)
+                else:
+                    CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento,CadenaResultado)
+            print("\nEstos son los géneros que desea consultar por el momento: ",CadenaResultado)
             print("¿Desea Agregar otro genero para consultar?:      ")
             print("1- SI")
             print("2- NO")
