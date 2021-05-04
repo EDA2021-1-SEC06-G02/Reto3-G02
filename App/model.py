@@ -43,11 +43,11 @@ los mismos.
 # Funciones para creacion de datos
 
 def newMusicRecomender():
-    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artist':None}
+    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None}
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
     return MusicRecomender
 
-def newEventEntry(EventoEscucha):
+def newEventEntry():
     entry = {'lstEvent': None}
     entry['lstEvent'] = lt.newList('ARRAY_LIST', compareValues)
     return entry
@@ -64,26 +64,34 @@ def addEventoEscucha(MusicRecomender, EventoEscucha):
     lt.addLast(MusicRecomender['EventosEscucha'], EventoEscucha)
     return MusicRecomender
 
-def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,LimDer):
+def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
     MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
     MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     i=1
     while i<=lt.size(MusicRecomender['EventosEscucha']):
         EventoEscucha = lt.getElement(MusicRecomender['EventosEscucha'],i)
         if Requerimiento==1:
-            updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,LimDer)
+            updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
         elif Requerimiento==2:
             pass
         elif Requerimiento==3:
-            pass
+            updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
         elif Requerimiento==4:
             tipoCaraCont="tempo"
-            updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont, Requerimiento, limInf, LimDer)
+            updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont, Requerimiento, limInf, limSup)
         elif Requerimiento==5:
             pass
         else:
-            updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento, limInf, LimDer)
+            updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento, limInf, limSup)
         i+=1
+    return MusicRecomender
+
+def addEventosRBT2(MusicRecomender,catalog2,Requerimiento,tipoCaraCont,limInf,limSup):
+    MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
+    MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
+    for elemento in lt.iterator(om.valueSet(catalog2['Caracs'])):
+        for EventoEscucha in lt.iterator(elemento["lstEvent"]):
+            updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
     return MusicRecomender
 
 def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento, limInfe,LimSup):
@@ -91,17 +99,20 @@ def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento,
     if Requerimiento==1:
         if value<limInfe or value>LimSup:
             return MusicRecomender['Caracs']
+    if Requerimiento==3:
+        if value<=limInfe or value>=LimSup:
+            return MusicRecomender['Caracs']
     elif Requerimiento==4:
         if value<limInfe or value>LimSup:
             return MusicRecomender['Caracs']
     Artists=MusicRecomender['Artists']
     entry = om.get(MusicRecomender['Caracs'], value)
     if entry is None:
-        EventEntry = newEventEntry(EventoEscucha)
-        om.put(MusicRecomender['Caracs'], value, EventEntry)
+        EventEntry = newEventEntry()
     else:
         EventEntry = me.getValue(entry)
     addEventIndex(Artists,EventEntry, EventoEscucha)
+    om.put(MusicRecomender['Caracs'], value, EventEntry)
     return MusicRecomender['Caracs']
 
 def addEventIndex(Artists,EventEntry, EventoEscucha):
@@ -138,12 +149,25 @@ def maxKey(analyzer):
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def getEventosByRange(analyzer, initialInfo, finalInfo):
-    lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
-    totEvens = 0
+    lst = om.values(analyzer['Caracs'], initialInfo+0.0000000001, finalInfo-0.0000000001)
+    totEvent = 0
     for lstEvent in lt.iterator(lst):
-        totEvens += lt.size(lstEvent['lstEvent'])
-    sizeTabla=lt.size(m.keySet(analyzer['Artists']))
-    return totEvens,sizeTabla
+        totEvent += lt.size(lstEvent['lstEvent'])          
+    sizeTabla= lt.size(m.keySet(analyzer['Artists']))
+    return totEvent,sizeTabla,lst
+
+def getEventosByRange2(analyzer, initialInfo, finalInfo):
+    lst = om.values(analyzer['Caracs'], initialInfo+0.0000000001, finalInfo-0.0000000001)
+    lista1 = lt.newList('ARRAY_LIST')
+    lista2 = lt.newList('ARRAY_LIST')
+    for lstEvent in lt.iterator(lst):
+        for evento in lt.iterator(lstEvent['lstEvent']):
+            if lt.isPresent(lista1,evento["track_id"])==0:
+                lt.addLast(lista1,evento["track_id"])
+                lt.addLast(lista2,evento)
+    totEvent = lt.size(lista2)
+    sizeTabla= lt.size(m.keySet(analyzer['Artists']))
+    return totEvent,sizeTabla,lista2
 
 # Funciones de ordenamiento
 
