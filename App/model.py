@@ -53,10 +53,14 @@ def newEventEntry():
     return entry
 
 def newArtistEntry(id):
-    Arentry = {'ArtistId': None, 'ArtistIsPresent': bool}
+    Arentry = {'ArtistId': None}
     Arentry['ArtistId'] = id
-    Arentry['ArtistIsPresent'] = False
     return Arentry
+
+def newIDEntry(id):
+    IDentry = {'EventId': None}
+    IDentry['EventId'] = id
+    return IDentry
 
 # Funciones para agregar informacion al catalogo
 
@@ -66,6 +70,7 @@ def addEventoEscucha(MusicRecomender, EventoEscucha):
 
 def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
     MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
+    #MusicRecomender['ID'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareID)
     MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     i=1
     while i<=lt.size(MusicRecomender['EventosEscucha']):
@@ -96,8 +101,12 @@ def addEventosRBT2(MusicRecomender,catalog2,Requerimiento,tipoCaraCont,limInf,li
 
 def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento, limInfe,LimSup):
     value = float(EventoEscucha[tipoCaraCont])
+    #value = (int(float(EventoEscucha[tipoCaraCont])*100))/100
+    #or m.contains(MapID,ID)
+    #MapID=MusicRecomender['ID']
+    #ID = EventoEscucha['id']
     if Requerimiento==1:
-        if value<limInfe or value>LimSup:
+        if value<limInfe or value>LimSup :
             return MusicRecomender['Caracs']
     if Requerimiento==3:
         if value<=limInfe or value>=LimSup:
@@ -111,18 +120,31 @@ def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento,
         EventEntry = newEventEntry()
     else:
         EventEntry = me.getValue(entry)
-    addEventIndex(Artists,EventEntry, EventoEscucha)
-    om.put(MusicRecomender['Caracs'], value, EventEntry)
-    return MusicRecomender['Caracs']
-
-def addEventIndex(Artists,EventEntry, EventoEscucha):
+    #addIDUniqueEvent(MapID,EventoEscucha)
+    addEventIndex(Artists, EventoEscucha)
     lst = EventEntry['lstEvent']
     lt.addLast(lst, EventoEscucha)
+    return MusicRecomender['Caracs']
+
+def addEventIndex(Artists, EventoEscucha):
     Arentry = m.get(Artists, EventoEscucha['artist_id'])
     if (Arentry is None):
         entry = newArtistEntry(EventoEscucha['artist_id'])
         m.put(Artists, EventoEscucha['artist_id'], entry)
-    return EventEntry
+
+def addIDUniqueEvent(MapID,EventoEscucha):
+    IDentry = m.get(MapID, EventoEscucha['id'])
+    if (IDentry is None):
+        entry = newIDEntry(EventoEscucha['id'])
+        m.put(MapID, EventoEscucha['id'], entry)
+
+def Requerimiento2(MusicRecomender,LimInf1,LimSup1,LimInf2,LimSup2):
+    i=1
+    while i<=lt.size(MusicRecomender['EventosEscucha']):
+        EventoEscucha = lt.getElement(MusicRecomender['EventosEscucha'],i)
+        if EventoEscucha[]
+        i+=1
+    return MusicRecomender
 
 # Funciones de consulta
 
@@ -190,6 +212,14 @@ def compareValues(value1, value2):
     else:
         return -1
 
+def compareID(ID1, ID2):
+    ID = me.getKey(ID2)
+    if (ID1 == ID):
+        return 0
+    elif (ID1 > ID):
+        return 1
+    else:
+        return -1
 
 def compareArtist(Artist1, Artist2):
     Artist = me.getKey(Artist2)
