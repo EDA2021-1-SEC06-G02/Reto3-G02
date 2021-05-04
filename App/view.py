@@ -162,13 +162,16 @@ def CrearNuevoGenero(generos,nombre,Min,Max):
 
 def Requerimiento4(catalog,Requerimiento,CaracContenido):
     Generos = CaracContenido.split(",")
+    total_eventos = 0
     i=0
     while i<len(Generos):
         Min,Max=ValoresGeneros(Generos[i].strip(),valores_generos)
         catalog = controller.addData(catalog,Requerimiento,Min,Max)
         totalEvento,TotalArtist,lista = controller.getEventosEscuchaByRange(catalog, Min, Max,Requerimiento)
+        total_eventos += totalEvento 
         printArtistas(lista,Generos[i].strip(),TotalArtist,totalEvento)
         i+=1
+    print("Total de reproducciones de todos los generos: "+str(total_eventos))
 
 def printPistas(lista, Requerimiento):
     formato_1 = "Track {}: {} con instrumentalness de {} y tempo de {}"
