@@ -43,7 +43,7 @@ los mismos.
 # Funciones para creacion de datos
 
 def newMusicRecomender():
-    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None}
+    MusicRecomender = {'EventosEscucha': None, 'Caracs': None, 'Artists':None, 'TempoGeneros':None}
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
     return MusicRecomender
 
@@ -67,6 +67,30 @@ def newIDEntry(id):
 def addEventoEscucha(MusicRecomender, EventoEscucha):
     lt.addLast(MusicRecomender['EventosEscucha'], EventoEscucha)
     return MusicRecomender
+
+def CrearTablaTempos(MusicRecomender):
+    MusicRecomender['TempoGeneros']= m.newMap(numelements=9, maptype='CHAINING', loadfactor=4.0, comparefunction=compareGenero)
+    m.put(MusicRecomender['TempoGeneros'],"reggae",60)
+    m.put(MusicRecomender['TempoGeneros'],"reggae",90)
+    m.put(MusicRecomender['TempoGeneros'],"down-tempo",70)
+    m.put(MusicRecomender['TempoGeneros'],"down-tempo",100)
+    m.put(MusicRecomender['TempoGeneros'],"chill-out",90)
+    m.put(MusicRecomender['TempoGeneros'],"chill-out",120)
+    m.put(MusicRecomender['TempoGeneros'],"hip-hop",85)
+    m.put(MusicRecomender['TempoGeneros'],"hip-hop",115)
+    m.put(MusicRecomender['TempoGeneros'],"jazz and funk",120)
+    m.put(MusicRecomender['TempoGeneros'],"jazz and funk",125)
+    m.put(MusicRecomender['TempoGeneros'],"pop",100)
+    m.put(MusicRecomender['TempoGeneros'],"pop",130)
+    m.put(MusicRecomender['TempoGeneros'],"r&b",60)
+    m.put(MusicRecomender['TempoGeneros'],"r&b",80)
+    m.put(MusicRecomender['TempoGeneros'],"rock",110)
+    m.put(MusicRecomender['TempoGeneros'],"rock",140)
+    m.put(MusicRecomender['TempoGeneros'],"metal",100)
+    m.put(MusicRecomender['TempoGeneros'],"metal",160)
+    print(MusicRecomender['TempoGeneros'])
+    m.
+
 
 def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
     MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
@@ -98,6 +122,11 @@ def addEventosRBT2(MusicRecomender,catalog2,Requerimiento,tipoCaraCont,limInf,li
         for EventoEscucha in lt.iterator(elemento["lstEvent"]):
             updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
     return MusicRecomender
+
+def addNuevoGenero(catalog,nombre,Min,Max):
+    nombre = nombre.lower()
+    m.put(catalog["TempoGeneros"],nombre,Min)
+    m.put(catalog["TempoGeneros"],nombre,Max)
 
 def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento, limInfe,LimSup):
     value = float(EventoEscucha[tipoCaraCont])
@@ -199,6 +228,13 @@ def getEventosByRange2(analyzer, initialInfo, finalInfo):
     sizeTabla= lt.size(m.keySet(analyzer['Artists']))
     return totEvent,sizeTabla,lista2
 
+def getDatosGenero(analyzer, genero):
+    generos = analyzer["TempoGeneros"]
+    tempo_genero = m.get(generos,genero)
+    return me.getValue(tempo_genero)
+
+def getGeneros(analyzer):
+    generos = m.keySet(analyzer["TempoGeneros"])
 # Funciones de ordenamiento
 
 #Funciones de comparacion
@@ -234,6 +270,15 @@ def compareArtist(Artist1, Artist2):
     if (Artist1 == Artist):
         return 0
     elif (Artist1 > Artist):
+        return 1
+    else:
+        return -1
+
+def compareGenero(Genero1, Genero2):
+    Genero = me.getKey(Genero2)
+    if (Genero1 == Genero):
+        return 0
+    elif (Genero1 > Genero):
         return 1
     else:
         return -1
