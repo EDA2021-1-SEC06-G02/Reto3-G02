@@ -342,5 +342,7 @@ while True:
         pass
 
     else:
+        print("\nApagando el sistema...")
+        print("Hasta luego\n")
         sys.exit(0)
 sys.exit(0)
