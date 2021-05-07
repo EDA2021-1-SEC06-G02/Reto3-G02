@@ -37,6 +37,7 @@ operación solicitada
 """
 def CambioDeValores(CaracContenido,Requerimiento,CadenaResultado=""):
     CadenaResultado
+    respuesta = None
     if Requerimiento==1:
         if CaracContenido==1:
             CadenaResultado = "instrumentalness"
@@ -106,50 +107,42 @@ def CambioDeValores(CaracContenido,Requerimiento,CadenaResultado=""):
                 if not(CadenaResultado==""):
                     CadenaResultado = CadenaResultado+", "
                 CadenaResultado = CadenaResultado+"Metal"
-    return CadenaResultado
+        elif CaracContenido==10:
+            nombre1 = input("Ingrese el nombre del genero: ").strip()
+            nombre2 = nombre1.strip().lower()
+            resultado = controller.getDatosGenero(catalog,nombre2)
+            if resultado:
+                if not(nombre1 in CadenaResultado):
+                    if not(CadenaResultado==""):
+                        CadenaResultado = CadenaResultado+", "
+                    CadenaResultado = CadenaResultado+nombre1
+            else: 
+                respuesta = "No existe"
+                print("El genero", nombre2, "no existe\n")
+    return CadenaResultado,respuesta
 
-def ValoresGeneros(genero):
-    Min=0
-    Max=0
-    if genero=="Reggae":
-        Min=60
-        Max=90
-    elif genero=="Down-tempo":
-        Min=70
-        Max=100
-    elif genero=="Chill-out":
-        Min=90
-        Max=120
-    elif genero=="Hip-hop":
-        Min=85
-        Max=115
-    elif genero=="Jazz and Funk":
-        Min=120
-        Max=125
-    elif genero=="Pop":
-        Min=100
-        Max=130
-    elif genero=="R&B,":
-        Min=60
-        Max=80
-    elif genero=="Rock":
-        Min=110
-        Max=140
-    elif genero=="Metal":
-        Min=100
-        Max=160
+def ValoresGeneros(catalog,genero):
+    genero = genero.lower()
+    datos_genero = controller.getDatosGenero(catalog,genero)
+    Min = lt.getElement(datos_genero,1)
+    Max = lt.getElement(datos_genero,2)
     return Min,Max
+
+def addNuevoGenero(catalog,nombre,Min,Max):
+    controller.addNuevoGenero(catalog,nombre,Min,Max)
 
 def Requerimiento4(catalog,Requerimiento,CaracContenido):
     Generos = CaracContenido.split(",")
+    total_eventos = 0
     i=0
     while i<len(Generos):
-        Min,Max=ValoresGeneros(Generos[i].strip())
+        Min,Max=ValoresGeneros(catalog,Generos[i].strip())
         catalog = controller.addData(catalog,Requerimiento,Min,Max)
-        totalEvento,TotalArtist = controller.getEventosEscuchaByRange(catalog, Min, Max)
-        print("\nTotal de Eventos de escuha en el rango dado: ",totalEvento)
-        print("\nTotal de Artistas en el rango dado: ",TotalArtist)
+        totalEvento,TotalArtist,lista = controller.getEventosEscuchaByRange(catalog, Min, Max,Requerimiento)
+        total_eventos += totalEvento 
+        printArtistas(lista,Generos[i].strip(),TotalArtist,totalEvento)
         i+=1
+    print("Total de reproducciones de todos los generos: "+str(total_eventos))
 
 def printPistas(lista, Requerimiento):
     formato_1 = "Track {}: {} con instrumentalness de {} y tempo de {}"
@@ -186,8 +179,18 @@ def printPistas(lista, Requerimiento):
                 print(formato_1.format(i,track_id,instru,tempo))
             i += 1
     
-    
-
+def printArtistas(lista,genero,artistas,eventos):
+    formato_1 = "Reproducciones de {}: {} con {} artistas unicos"
+    formato_2 = "_______Algunos artistas de {}_______"
+    formato_3 = "Artista {}: {}"
+    print(formato_1.format(genero,eventos,artistas))
+    print(formato_2.format(genero))
+    i = 1
+    while i <= 10 and i <=lt.size(lista):
+        artista_id = lt.getElement(lista,i)
+        print(formato_3.format(i,artista_id))
+        i +=1
+    print(" ")
 
 def printMenu():
     print(" ")
@@ -201,6 +204,7 @@ def printMenu():
 
 catalog = None
 
+
 """
 Menu principal
 """
@@ -210,6 +214,7 @@ while True:
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
         catalog = controller.loadData()
+
 
     elif int(inputs[0]) == 2:
         Requerimiento = 1
@@ -231,7 +236,7 @@ while True:
             CaracContenido = int(input("Seleccione la característica de contenido que desea consultar:      "))
         initialInfo = float(input("Rango inferior: "))
         finalInfo = float(input("Rango superior: "))
-        CaracContenido = CambioDeValores(CaracContenido,Requerimiento)
+        CaracContenido,r = CambioDeValores(CaracContenido,Requerimiento)
         t1 = time.process_time()
         catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo,CaracContenido)
         totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo)
@@ -287,28 +292,44 @@ while True:
     elif int(inputs[0]) == 5:
         Requerimiento = 4
         verifica=True
+        Preseguir = 1
         CadenaResultado=""
         while verifica:
-            print("1- Reggae")
-            print("2- Down-tempo")
-            print("3- Chill-out")
-            print("4- Hip-hop")
-            print("5- Jazz and Funk")
-            print("6- Pop")
-            print("7- R&B")
-            print("8- Rock")
-            print("9- Metal")
-            print("10- Escribirlo Manualmente")
-            GenerosConsultaID = int(input("Seleccione el género que desea consultar:      "))
-            if CadenaResultado=="":
-                CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento)
+            GenerosConsultaID = 0
+            while GenerosConsultaID>11 or  GenerosConsultaID<1:
+                print("\n1- Reggae")
+                print("2- Down-tempo")
+                print("3- Chill-out")
+                print("4- Hip-hop")
+                print("5- Jazz and Funk")
+                print("6- Pop")
+                print("7- R&B")
+                print("8- Rock")
+                print("9- Metal")
+                print("10- Escribirlo Manualmente")
+                print("11- Crear Nuevo Genero")
+                GenerosConsultaID = int(input("Seleccione el género que desea consultar:      "))
+                print(" ")
+            if GenerosConsultaID == 11:
+                print("______Crear Nuevo Genero______")
+                nombre = input("Nombre: ")
+                Min = float(input("Tempo Minimo: "))
+                Max = float(input("Tempo Maximo: "))
+                addNuevoGenero(catalog,nombre,Min,Max)
+                print("¡Genero creado exitosamente!\n")
+                print("\nEstos son los géneros que desea consultar por el momento: ",CadenaResultado)
             else:
-                CadenaResultado = CambioDeValores(GenerosConsultaID,Requerimiento,CadenaResultado)
-            print("Estos son los géneros que desea consultar por el momento: ",CadenaResultado)
-            print("¿Desea Agregar otro genero para consultar?:      ")
-            print("1- SI")
-            print("2- NO")
-            Preseguir=int(input("Ingrese su selección:      "))
+                resultado = None
+                if CadenaResultado=="":
+                    CadenaResultado,resultado = CambioDeValores(GenerosConsultaID,Requerimiento)
+                else:
+                    CadenaResultado,resultado = CambioDeValores(GenerosConsultaID,Requerimiento,CadenaResultado)
+                print("\nEstos son los géneros que desea consultar por el momento: ",CadenaResultado)
+                if (resultado == None):
+                    print("¿Desea Agregar otro genero para consultar?:      ")
+                    print("1- SI")
+                    print("2- NO")
+                    Preseguir=int(input("Ingrese su selección:      "))
             if Preseguir==2:
                 verifica=False
         t1 = time.process_time()

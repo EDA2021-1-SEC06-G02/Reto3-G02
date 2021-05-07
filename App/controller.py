@@ -40,6 +40,7 @@ def loadData():
     input_file = csv.DictReader(open(File, encoding="utf-8"), delimiter=",")
     for Entry in input_file:
         model.addEventoEscucha(MusicRecomender, Entry)
+    model.CrearTablaTempos(MusicRecomender)
     return MusicRecomender
     
 def addData(MusicRecomender,Requerimiento,limInf=0,LimDer=1,CaracContenido="instrumentalness"):
@@ -47,15 +48,24 @@ def addData(MusicRecomender,Requerimiento,limInf=0,LimDer=1,CaracContenido="inst
 
 def addData2(MusicRecomender,catalog2,Requerimiento,limInf=0,LimDer=1,CaracContenido="instrumentalness"):
     return model.addEventosRBT2(MusicRecomender,catalog2,Requerimiento,CaracContenido,limInf,LimDer)
+
+def addNuevoGenero(catalog,nombre,Min,Max):
+    model.addNuevoGenero(catalog,nombre,Min,Max)
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
 
-def getEventosEscuchaByRange(analyzer, initialInfo, finalInfo):
-    return model.getEventosByRange(analyzer,initialInfo,finalInfo)
+def getEventosEscuchaByRange(analyzer, initialInfo, finalInfo, Requerimiento=1):
+    return model.getEventosByRange(analyzer,initialInfo,finalInfo,Requerimiento)
 
 def getEventosEscuchaByRange2(analyzer, initialInfo, finalInfo):
     return model.getEventosByRange2(analyzer,initialInfo,finalInfo)
+
+def getDatosGenero(analyzer, genero):
+    return model.getDatosGenero(analyzer, genero)
+
+def getGeneros(analyzer):
+    return model.getGeneros(analyzer)
 
 def EventosEscuchaSize(MusicRecomender):
     return model.EventosEscuchaSize(MusicRecomender)
