@@ -175,10 +175,10 @@ def printPistas(lista, Requerimiento):
                 numeros.append(numero)
         i = 1
         while i <= len(numeros):
-            track_id = lt.getElement(lista,numeros[i-1])["track_id"]
+            track_id = lt.getElement(lista,numeros[i-1])['track_id']
             if(Requerimiento == 2):
-                ener = lt.getElement(lista,i)["energy"]
-                dance = lt.getElement(lista,i)["danceability"]
+                ener = lt.getElement(lista,numeros[i-1])['energy']
+                dance = lt.getElement(lista,numeros[i-1])['danceability']
                 print(formato_2.format(i,track_id,ener,dance))
             if(Requerimiento == 3):
                 instru = lt.getElement(lista,numeros[i-1])["instrumentalness"]
@@ -243,7 +243,25 @@ while True:
         print("Total Artistas Unicos:",totalArtist)
     
     elif int(inputs[0]) == 3:
-        pass
+        print("Ingrese el rango de Energy:")
+        LimInf1 = float(input("Rango inferior:  "))
+        LimSup1 = float(input("Rango superior:  "))
+        print("Ingrese el rango de Danceability:")
+        LimInf2 = float(input("Rango inferior:  "))
+        LimSup2 = float(input("Rango superior:  "))
+        Requerimiento = 2
+        t1 = time.process_time()
+        catalog = controller.addData(catalog,Requerimiento,LimInf1,LimSup1,'energy')
+        catalog2 = {"Caracs": catalog['Caracs']}
+        catalog = controller.addData2(catalog,catalog2,Requerimiento,LimInf2,LimSup2,'danceability')
+        totalEvento,lista = controller.Requerimiento2(catalog, LimInf2, LimSup2)
+        t2 = time.process_time()
+        time_mseg = (t2 - t1)*1000
+        print(" ")
+        print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
+        print("Total Eventos Unicos:",totalEvento)
+        print("----Tracks---")
+        printPistas(lista,Requerimiento)
 
     elif int(inputs[0]) == 4:
         print("***Ingrese el rango de Instrumentalness:")

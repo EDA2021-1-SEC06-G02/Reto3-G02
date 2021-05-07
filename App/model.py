@@ -43,8 +43,11 @@ los mismos.
 # Funciones para creacion de datos
 
 def newMusicRecomender():
-    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None}
+    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'SentimentsValues':None, 'Hashtags': None}
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
+#    MusicRecomender['SentimentsValues'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareDates)
+    MusicRecomender['Hashtags'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
+
     return MusicRecomender
 
 def newEventEntry():
@@ -78,7 +81,7 @@ def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
         if Requerimiento==1:
             updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
         elif Requerimiento==2:
-            pass
+            updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
         elif Requerimiento==3:
             updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
         elif Requerimiento==4:
@@ -105,13 +108,10 @@ def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento,
     #or m.contains(MapID,ID)
     #MapID=MusicRecomender['ID']
     #ID = EventoEscucha['id']
-    if Requerimiento==1:
-        if value<limInfe or value>LimSup :
-            return MusicRecomender['Caracs']
     if Requerimiento==3:
         if value<=limInfe or value>=LimSup:
             return MusicRecomender['Caracs']
-    elif Requerimiento==4:
+    else:
         if value<limInfe or value>LimSup:
             return MusicRecomender['Caracs']
     Artists=MusicRecomender['Artists']
@@ -125,8 +125,8 @@ def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento,
     om.put(MusicRecomender['Caracs'], value, EventEntry)
     return MusicRecomender['Caracs']
 
-def addEventIndex(Artists,EventEntry, EventoEscucha):
-    return MusicRecomender['Caracs']
+#def addEventIndex(Artists,EventEntry, EventoEscucha):
+#    return MusicRecomender['Caracs']
 
 def addEventIndex(Artists,EventEntry,EventoEscucha):
     lst=EventEntry['lstEvent']
@@ -143,13 +143,15 @@ def addIDUniqueEvent(MapID,EventoEscucha):
         entry = newIDEntry(EventoEscucha['id'])
         m.put(MapID, EventoEscucha['id'], entry)
 
-def Requerimiento2(MusicRecomender,LimInf1,LimSup1,LimInf2,LimSup2):
-    i=1
-    while i<=lt.size(MusicRecomender['EventosEscucha']):
-        EventoEscucha = lt.getElement(MusicRecomender['EventosEscucha'],i)
-        #if EventoEscucha[]
-        i+=1
-    return MusicRecomender
+def Requerimiento2(MusicRecomender,initialInfo,finalInfo):
+    lst = om.values(MusicRecomender['Caracs'], initialInfo, finalInfo)
+    lista1 = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
+    for lstEvent in lt.iterator(lst):
+        for evento in lt.iterator(lstEvent['lstEvent']):
+            if not(lt.isPresent(lista1,evento['track_id'])>0):
+                lt.addLast(lista1,evento)
+    totEvent = lt.size(lista1)
+    return totEvent,lista1
 
 # Funciones de consulta
 
@@ -200,13 +202,10 @@ def getEventosByRange2(analyzer, initialInfo, finalInfo):
 
 #Funciones de comparacion
 
-def compareIds(id1, id2):
-    if (id1 == id2):
+def compareIds(ID,Lista):
+    if (ID.lower() in Lista['track_id'].lower()):
         return 0
-    elif id1 > id2:
-        return 1
-    else:
-        return -1
+    return -1
 
 
 def compareValues(value1, value2):
@@ -216,6 +215,15 @@ def compareValues(value1, value2):
         return 1
     else:
         return -1
+
+def compareHashTag(HT1, HT2):
+    HT = me.getKey(HT2)
+    if (HT1 == HT):
+        return 0
+    elif (HT1 > HT):
+        return 1
+    else:
+        return -1      
 
 def compareID(ID1, ID2):
     ID = me.getKey(ID2)
