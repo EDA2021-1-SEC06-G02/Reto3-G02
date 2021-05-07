@@ -254,7 +254,7 @@ while True:
         catalog = controller.addData(catalog,Requerimiento,LimInf1,LimSup1,'energy')
         catalog2 = {"Caracs": catalog['Caracs']}
         catalog = controller.addData2(catalog,catalog2,Requerimiento,LimInf2,LimSup2,'danceability')
-        totalEvento,lista = controller.Requerimiento2(catalog, LimInf2, LimSup2)
+        totalEvento,lista = controller.getEventosEscuchaByRange2(catalog, LimInf2, LimSup2)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print(" ")
@@ -275,7 +275,7 @@ while True:
         catalog = controller.addData(catalog,Requerimiento,limInfInstru,limSupInstru,"instrumentalness")
         catalog2 = {"Caracs": catalog['Caracs']}
         catalog = controller.addData2(catalog,catalog2,Requerimiento,limInfTempo,limSupTempo,"tempo")
-        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange2(catalog, limInfTempo, limSupTempo)
+        totalEvento,lista = controller.getEventosEscuchaByRange2(catalog, limInfTempo, limSupTempo)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print(" ")
@@ -323,11 +323,3 @@ while True:
     else:
         sys.exit(0)
 sys.exit(0)
-
-
-
-"""print('Eventos cargados: ' + str(controller.EventosEscuchaSize(catalog)))
-print('Altura del arbol: ' + str(controller.indexHeight(catalog)))
-print('Elementos en el arbol: ' + str(controller.indexSize(catalog)))
-print('Menor Llave: ' + str(controller.minKey(catalog)))
-print('Mayor Llave: ' + str(controller.maxKey(catalog)))"""

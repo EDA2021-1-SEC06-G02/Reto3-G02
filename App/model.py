@@ -104,10 +104,6 @@ def addEventosRBT2(MusicRecomender,catalog2,Requerimiento,tipoCaraCont,limInf,li
 
 def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento, limInfe,LimSup):
     value = float(EventoEscucha[tipoCaraCont])
-    #value = (int(float(EventoEscucha[tipoCaraCont])*100))/100
-    #or m.contains(MapID,ID)
-    #MapID=MusicRecomender['ID']
-    #ID = EventoEscucha['id']
     if Requerimiento==3:
         if value<=limInfe or value>=LimSup:
             return MusicRecomender['Caracs']
@@ -120,13 +116,9 @@ def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento,
         EventEntry = newEventEntry()
     else:
         EventEntry = me.getValue(entry)
-    #addIDUniqueEvent(MapID,EventoEscucha)
     addEventIndex(Artists,EventEntry, EventoEscucha)
     om.put(MusicRecomender['Caracs'], value, EventEntry)
     return MusicRecomender['Caracs']
-
-#def addEventIndex(Artists,EventEntry, EventoEscucha):
-#    return MusicRecomender['Caracs']
 
 def addEventIndex(Artists,EventEntry,EventoEscucha):
     lst=EventEntry['lstEvent']
@@ -142,16 +134,6 @@ def addIDUniqueEvent(MapID,EventoEscucha):
     if (IDentry is None):
         entry = newIDEntry(EventoEscucha['id'])
         m.put(MapID, EventoEscucha['id'], entry)
-
-def Requerimiento2(MusicRecomender,initialInfo,finalInfo):
-    lst = om.values(MusicRecomender['Caracs'], initialInfo, finalInfo)
-    lista1 = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
-    for lstEvent in lt.iterator(lst):
-        for evento in lt.iterator(lstEvent['lstEvent']):
-            if not(lt.isPresent(lista1,evento['track_id'])>0):
-                lt.addLast(lista1,evento)
-    totEvent = lt.size(lista1)
-    return totEvent,lista1
 
 # Funciones de consulta
 
@@ -187,16 +169,13 @@ def getEventosByRange(analyzer, initialInfo, finalInfo):
 
 def getEventosByRange2(analyzer, initialInfo, finalInfo):
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
-    lista1 = lt.newList('ARRAY_LIST')
-    lista2 = lt.newList('ARRAY_LIST')
+    lista1 = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
     for lstEvent in lt.iterator(lst):
         for evento in lt.iterator(lstEvent['lstEvent']):
-            if lt.isPresent(lista1,evento["track_id"])==0:
-                lt.addLast(lista1,evento["track_id"])
-                lt.addLast(lista2,evento)
-    totEvent = lt.size(lista2)
-    sizeTabla= lt.size(m.keySet(analyzer['Artists']))
-    return totEvent,sizeTabla,lista2
+            if not(lt.isPresent(lista1,evento['track_id'])>0):
+                lt.addLast(lista1,evento)
+    totEvent = lt.size(lista1)
+    return totEvent,lista1
 
 # Funciones de ordenamiento
 

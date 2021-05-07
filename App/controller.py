@@ -51,9 +51,6 @@ def addData2(MusicRecomender,catalog2,Requerimiento,limInf=0,LimDer=1,CaracConte
 
 # Funciones de consulta sobre el catálogo
 
-def Requerimiento2(MusicRecomender,initialInfo,finalInfo):
-    return model.Requerimiento2(MusicRecomender,initialInfo,finalInfo)
-
 def getEventosEscuchaByRange(analyzer, initialInfo, finalInfo):
     return model.getEventosByRange(analyzer,initialInfo,finalInfo)
 
