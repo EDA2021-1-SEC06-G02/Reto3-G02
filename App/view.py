@@ -144,6 +144,11 @@ def Requerimiento4(catalog,Requerimiento,CaracContenido):
         i+=1
     print("Total de reproducciones de todos los generos: "+str(total_eventos))
 
+def printDatosCargados():
+    """print("___Se cargaron___")
+    print("} " + str(lt.size(catalog["EventosEscucha"])) + " eventos de escucha.")
+    print("} " + str(lt.size(catalog["Artists"])) + " artistas unicos.")"""
+
 def printPistas(lista, Requerimiento):
     formato_1 = "Track {}: {} con instrumentalness de {} y tempo de {}"
     formato_2 = "Track {}: {} con energy de {} y danceability de {}"
@@ -214,6 +219,7 @@ while True:
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
         catalog = controller.loadData()
+        printDatosCargados()
 
 
     elif int(inputs[0]) == 2:
