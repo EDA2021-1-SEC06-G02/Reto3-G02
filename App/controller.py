@@ -35,12 +35,22 @@ El controlador se encarga de mediar entre la vista y el modelo.
 
 def loadData():
     File = "context_content_features-small.csv"
+    File2= "user_track_hashtag_timestamp-small.csv"
+    File3= "sentiment_values.csv"
     MusicRecomender = model.newMusicRecomender()
     File = cf.data_dir + File
+    File2 = cf.data_dir + File2
+    File3 = cf.data_dir + File3
     input_file = csv.DictReader(open(File, encoding="utf-8"), delimiter=",")
     for Entry in input_file:
         model.addEventoEscucha(MusicRecomender, Entry)
-    model.CrearTablaTempos(MusicRecomender)
+    input_file = csv.DictReader(open(File2, encoding="utf-8"), delimiter=",")
+    for Entry in input_file:
+        model.addEventoEscucha2(MusicRecomender, Entry)
+    input_file = csv.DictReader(open(File3, encoding="utf-8"), delimiter=",")
+    for Entry in input_file:
+        model.addEventoEscucha3(MusicRecomender, Entry)
+    model.CrearTablaTempos(MusicRecomender)    
     return MusicRecomender
     
 def addData(MusicRecomender,Requerimiento,limInf=0,LimDer=1,CaracContenido="instrumentalness"):
@@ -77,6 +87,8 @@ def indexHeight(MusicRecomender):
 def indexSize(MusicRecomender):
     return model.indexSize(MusicRecomender)
 
+def Requerimiento5(catalog,Requerimiento):
+    model.Requerimiento5(catalog,Requerimiento)
 
 def minKey(MusicRecomender):
     return model.minKey(MusicRecomender)

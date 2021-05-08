@@ -45,14 +45,19 @@ los mismos.
 def newMusicRecomender():
     MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'TempoGeneros':None, 'SentimentsValues':None, 'Hashtags': None}
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
-#    MusicRecomender['SentimentsValues'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareDates)
-    MusicRecomender['Hashtags'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
+    MusicRecomender['Hashtags'] = om.newMap(omaptype='RBT', comparefunction=compareDates)
+    MusicRecomender['SentimentsValues'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
 
     return MusicRecomender
 
 def newEventEntry():
     entry = {'lstEvent': None}
     entry['lstEvent'] = lt.newList('ARRAY_LIST', compareValues)
+    return entry
+
+def newHashtagEntry():
+    entry = {'TracksID':None}
+    entry['TracksID'] = m.newMap(numelements=2, maptype='PROBING', loadfactor=0.5, comparefunction=compareID)
     return entry
 
 def newArtistEntry(id):
@@ -70,6 +75,51 @@ def newIDEntry(id):
 def addEventoEscucha(MusicRecomender, EventoEscucha):
     lt.addLast(MusicRecomender['EventosEscucha'], EventoEscucha)
     return MusicRecomender
+
+def addEventoEscucha2(MusicRecomender, HashtagsEventos):
+    DateKey=CreateDate(HashtagsEventos)
+    entry = om.get(MusicRecomender['Hashtags'], DateKey)
+    if entry is None:
+        HashEntry = newHashtagEntry()
+    else:
+        HashEntry = me.getValue(entry)
+    addHashtagInfo(HashEntry, HashtagsEventos)
+    om.put(MusicRecomender['Hashtags'], DateKey, HashEntry)
+    return MusicRecomender
+
+def addEventoEscucha3(MusicRecomender, SentimentsData):
+    Hashtag = SentimentsData['hashtag']
+    existHashTag = m.contains(MusicRecomender['SentimentsValues'], Hashtag)
+    if existHashTag:
+        entry = m.get(MusicRecomender['SentimentsValues'], Hashtag)
+        Hash = me.getValue(entry)
+    else:
+        Hash = newSentimentsValues(Hashtag)
+        m.put(MusicRecomender['SentimentsValues'], Hashtag, Hash)
+    lt.addLast(Hash['ValuesHastags'], SentimentsData)
+    return MusicRecomender
+
+def newSentimentsValues(name):
+    Values = {"ValuesHastags": None}
+    Values['ValuesHastags'] = lt.newList('ARRAY_LIST')
+    return Values
+
+
+def addHashtagInfo(HashEntry, HashtagsEventos):
+    Trackentry = m.get(HashEntry['TracksID'], HashtagsEventos['track_id'])
+    if (Trackentry is None):
+        entry = newTrackInfoEntry(HashtagsEventos)
+    else:
+        entry = me.getValue(Trackentry)
+        lt.addLast(entry['lstHashtags'],HashtagsEventos['hashtag'])
+    m.put(HashEntry['TracksID'], HashtagsEventos['track_id'], entry)
+    return Trackentry
+
+def newTrackInfoEntry(HashtagsEventos):
+    TrackInfoEntry = {'lstHashtags':None}
+    TrackInfoEntry['lstHashtags'] = lt.newList('ARRAY_LIST')
+    lt.addLast(TrackInfoEntry['lstHashtags'],HashtagsEventos['hashtag'])
+    return TrackInfoEntry
 
 def CrearTablaTempos(MusicRecomender):
     MusicRecomender['TempoGeneros']= m.newMap(numelements=9, maptype='CHAINING', loadfactor=4.0, comparefunction=compareGenero)
@@ -109,7 +159,6 @@ def CrearTablaTempos(MusicRecomender):
     lt.addLast(tempo_lst,100)
     lt.addLast(tempo_lst,160)
     m.put(MusicRecomender['TempoGeneros'],"metal",tempo_lst)
-
 
 def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
     MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
@@ -236,6 +285,24 @@ def getDatosGenero(analyzer, genero):
 
 def getGeneros(analyzer):
     generos = m.keySet(analyzer["TempoGeneros"])
+
+def Requerimiento5(catalog,Requerimiento):
+    h=catalog['EventosEscucha']
+    g=lt.getElement(h,1)
+    horas=g['created_at'].split()[1].split(":")
+    print(horas)
+    horaSeg=(int(horas[0]))*3600
+    minSeg=(int(horas[1]))*60
+    horaFin=horaSeg+minSeg+(int(horas[2]))
+    print(horaFin)
+
+def CreateDate(data):
+    horas=data['created_at'].split()[1].split(":")
+    horaSeg=(int(horas[0]))*3600
+    minSeg=(int(horas[1]))*60
+    horaFin=horaSeg+minSeg+(int(horas[2]))
+    return horaFin
+
 # Funciones de ordenamiento
 
 #Funciones de comparacion
@@ -245,6 +312,10 @@ def compareIds(ID,Lista):
         return 0
     return -1
 
+"""def compareHashTags(Hash,Lista):
+    if (Hash.lower() in Lista.lower()):
+        return 0
+    return -1"""
 
 def compareValues(value1, value2):
     if (value1 == value2):
@@ -268,6 +339,14 @@ def compareID(ID1, ID2):
     if (ID1 == ID):
         return 0
     elif (ID1 > ID):
+        return 1
+    else:
+        return -1
+
+def compareDates(Date1, Date2):
+    if (Date1 == Date2):
+        return 0
+    elif (Date1 > Date2):
         return 1
     else:
         return -1
