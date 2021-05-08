@@ -218,9 +218,12 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        t1 = time.process_time()
         catalog = controller.loadData()
         printDatosCargados()
-
+        t2 = time.process_time()
+        time_mseg = (t2 - t1)*1000
+        print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
 
     elif int(inputs[0]) == 2:
         Requerimiento = 1
@@ -345,7 +348,8 @@ while True:
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
 
     elif int(inputs[0]) == 6:
-        pass
+        Requerimiento=5
+        controller.Requerimiento5(catalog,Requerimiento)
 
     else:
         print("\nApagando el sistema...")
