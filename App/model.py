@@ -77,7 +77,7 @@ def addEventoEscucha(MusicRecomender, EventoEscucha):
     return MusicRecomender
 
 def addEventoEscucha2(MusicRecomender, HashtagsEventos):
-    DateKey=CreateDate(HashtagsEventos)
+    DateKey=CreateDate(HashtagsEventos['created_at'])
     entry = om.get(MusicRecomender['Hashtags'], DateKey)
     if entry is None:
         HashEntry = newHashtagEntry()
@@ -177,7 +177,8 @@ def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
             tipoCaraCont="tempo"
             updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont, Requerimiento, limInf, limSup)
         elif Requerimiento==5:
-            pass
+            tipoCaraCont="Date"
+            updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont, Requerimiento, limInf, limSup)
         else:
             updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento, limInf, limSup)
         i+=1
@@ -199,11 +200,18 @@ def addNuevoGenero(catalog,nombre,Min,Max):
     m.put(catalog["TempoGeneros"],nombre,tempo_lst)
 
 def updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont,Requerimiento, limInfe,LimSup):
-    value = float(EventoEscucha[tipoCaraCont])
     if Requerimiento==3:
+        value = float(EventoEscucha[tipoCaraCont])
         if value<=limInfe or value>=LimSup:
             return MusicRecomender['Caracs']
+    if Requerimiento==5:
+        value = CreateDate(EventoEscucha['created_at'])
+        limInfe = ConvertLimits(limInfe)
+        LimSup = ConvertLimits(LimSup)
+        if value<limInfe or value>LimSup:
+            return MusicRecomender['Caracs']
     else:
+        value = float(EventoEscucha[tipoCaraCont])
         if value<limInfe or value>LimSup:
             return MusicRecomender['Caracs']
     Artists=MusicRecomender['Artists']
@@ -256,6 +264,9 @@ def maxKey(analyzer):
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
+    if Requerimiento==5:
+        initialInfo = ConvertLimits(initialInfo)
+        finalInfo = ConvertLimits(finalInfo)
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
     totEvent = 0
     for lstEvent in lt.iterator(lst):
@@ -287,17 +298,17 @@ def getGeneros(analyzer):
     generos = m.keySet(analyzer["TempoGeneros"])
 
 def Requerimiento5(catalog,Requerimiento):
-    h=catalog['EventosEscucha']
-    g=lt.getElement(h,1)
-    horas=g['created_at'].split()[1].split(":")
-    print(horas)
+    pass
+
+def CreateDate(data):
+    horas=data.split()[1].split(":")
     horaSeg=(int(horas[0]))*3600
     minSeg=(int(horas[1]))*60
     horaFin=horaSeg+minSeg+(int(horas[2]))
-    print(horaFin)
+    return horaFin
 
-def CreateDate(data):
-    horas=data['created_at'].split()[1].split(":")
+def ConvertLimits(lim):
+    horas=lim.split(":")
     horaSeg=(int(horas[0]))*3600
     minSeg=(int(horas[1]))*60
     horaFin=horaSeg+minSeg+(int(horas[2]))

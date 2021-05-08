@@ -348,8 +348,40 @@ while True:
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
 
     elif int(inputs[0]) == 6:
+        verifica=False
+        while not(verifica):
+            verifica=True
+            print("La introducción de la hora debe realizarse con el formate de 24 horas")
+            horaInicio = input("Ingrese desde que hora quiere emepezar a consultar:  ")
+            MinInicio = input("Ingrese desde que minutos quiere emepezar a consultar:  ")
+            horaFin = input("Ingrese hasta que hora quiere consultar:   ")
+            MinFin = input("Ingrese hasta que minutos quiere consultar:   ")
+            if int(horaInicio)>23 or int(horaInicio)<0:
+                print("Ha ingresado alguna hora que no es valida, intentelo nuevamente")
+                verifica=False
+            elif int(MinInicio)>60 or int(MinInicio)<0:
+                print("Ha ingresado alguna hora que no es valida, intentelo nuevamente")
+                verifica=False
+            elif int(horaFin)>23 or int(horaFin)<0:
+                print("Ha ingresado alguna hora que no es valida, intentelo nuevamente")
+                verifica=False
+            elif int(MinFin)>60 or int(MinFin)<0:
+                print("Ha ingresado alguna hora que no es valida, intentelo nuevamente")
+                verifica=False
+        initialInfo = horaInicio+":"+MinInicio+":"+"00"
+        finalInfo = horaFin+":"+MinFin+":"+"00"
+        print("las horas de consulta serán desde: ",initialInfo," hasta: ", finalInfo)
         Requerimiento=5
-        controller.Requerimiento5(catalog,Requerimiento)
+        t1 = time.process_time()
+        catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo)
+        print(catalog['Caracs'])
+        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo,Requerimiento)        t2 = time.process_time()
+        time_mseg = (t2 - t1)*1000
+        print(" ")
+        print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
+        print("Total Eventos Reproducción:",totalEvento)
+        print("Total Eventos Reproducción:",totalEvento1)
+
 
     else:
         print("\nApagando el sistema...")
