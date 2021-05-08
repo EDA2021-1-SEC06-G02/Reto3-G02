@@ -43,8 +43,10 @@ los mismos.
 # Funciones para creacion de datos
 
 def newMusicRecomender():
-    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'TempoGeneros':None, 'SentimentsValues':None, 'Hashtags': None}
+    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'Pistas':None, 'TempoGeneros':None, 'SentimentsValues':None, 'Hashtags': None}
+    MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
+    MusicRecomender['Pistas'] = m.newMap(numelements=32000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
     MusicRecomender['Hashtags'] = om.newMap(omaptype='RBT', comparefunction=compareDates)
     MusicRecomender['SentimentsValues'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
 
@@ -74,6 +76,7 @@ def newIDEntry(id):
 
 def addEventoEscucha(MusicRecomender, EventoEscucha):
     lt.addLast(MusicRecomender['EventosEscucha'], EventoEscucha)
+    m.put(MusicRecomender['Pistas'],EventoEscucha['track_id'],EventoEscucha)
     return MusicRecomender
 
 def addEventoEscucha2(MusicRecomender, HashtagsEventos):
@@ -98,6 +101,10 @@ def addEventoEscucha3(MusicRecomender, SentimentsData):
         m.put(MusicRecomender['SentimentsValues'], Hashtag, Hash)
     lt.addLast(Hash['ValuesHastags'], SentimentsData)
     return MusicRecomender
+
+def addArtist(MusicRecomender, Entry):
+    artist = Entry['artist_id']
+    m.put(MusicRecomender['Artists'],artist,Entry)
 
 def newSentimentsValues(name):
     Values = {"ValuesHastags": None}
@@ -285,6 +292,10 @@ def getDatosGenero(analyzer, genero):
 
 def getGeneros(analyzer):
     generos = m.keySet(analyzer["TempoGeneros"])
+
+def getPistas(analyzer):
+    pistas = m.keySet(analyzer["Pistas"])
+    return pistas
 
 def Requerimiento5(catalog,Requerimiento):
     h=catalog['EventosEscucha']
