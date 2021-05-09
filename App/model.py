@@ -295,12 +295,13 @@ def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
     return totEvent,sizeTabla,lst
  
 def getEventosByRange2(analyzer, initialInfo, finalInfo):
+    Mapa = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
     lista1 = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
     for lstEvent in lt.iterator(lst):
         for evento in lt.iterator(lstEvent['lstEvent']):
-            if not(lt.isPresent(lista1,evento['track_id'])>0):
-                lt.addLast(lista1,evento)
+            m.put(Mapa,evento['track_id'],evento)
+    lista1 = m.valueSet(Mapa)
     totEvent = lt.size(lista1)
     return totEvent,lista1
 
