@@ -180,7 +180,6 @@ def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
         elif Requerimiento==3:
             updateCaracIndex(MusicRecomender, EventoEscucha,tipoCaraCont,Requerimiento,limInf,limSup)
         elif Requerimiento==4:
-            tipoCaraCont="tempo"
             updateCaracIndex(MusicRecomender, EventoEscucha, tipoCaraCont, Requerimiento, limInf, limSup)
         elif Requerimiento==5:
             tipoCaraCont="Date"
@@ -307,6 +306,7 @@ def getDatosGenero(analyzer, genero):
 
 def getGeneros(analyzer):
     generos = m.keySet(analyzer["TempoGeneros"])
+    return generos
 
 def getPistas(analyzer):
     pistas = m.keySet(analyzer["Pistas"])

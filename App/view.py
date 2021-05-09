@@ -137,12 +137,26 @@ def Requerimiento4(catalog,Requerimiento,CaracContenido):
     i=0
     while i<len(Generos):
         Min,Max=ValoresGeneros(catalog,Generos[i].strip())
-        catalog = controller.addData(catalog,Requerimiento,Min,Max)
+        catalog = controller.addData(catalog,Requerimiento,Min,Max,'tempo')
         totalEvento,TotalArtist,lista = controller.getEventosEscuchaByRange(catalog, Min, Max,Requerimiento)
         total_eventos += totalEvento 
         printArtistas(lista,Generos[i].strip(),TotalArtist,totalEvento)
         i+=1
     print("Total de reproducciones de todos los generos: "+str(total_eventos))
+
+def Requerimiento5(catalog,catalog2,Requerimiento,Generos):
+    total_eventos = 0
+    i=1
+    print(" ")
+    while i<= lt.size(Generos):
+        genero = lt.getElement(Generos,i).strip()
+        Min,Max=ValoresGeneros(catalog,genero)
+        catalog = controller.addData2(catalog,catalog2,Requerimiento,Min,Max,"tempo")
+        totalEvento,TotalArtist,lista = controller.getEventosEscuchaByRange(catalog, Min, Max,Requerimiento)
+        total_eventos += totalEvento 
+        printGenero(i,genero,totalEvento)
+        i+=1
+    return total_eventos
 
 def printDatosCargados():
     print("___Se cargaron___")
@@ -230,6 +244,10 @@ def printArtistas(lista,genero,artistas,eventos):
         print(formato_3.format(i,artista_id))
         i +=1
     print(" ")
+
+def printGenero(numero,genero,reproducciones):
+    formato_1 = "{}- {} con {} reproducciones"
+    print(formato_1.format(numero,genero,reproducciones))
 
 def printMenu():
     print(" ")
@@ -404,16 +422,19 @@ while True:
                 verifica=False
         initialInfo = horaInicio+":"+MinInicio+":"+"00"
         finalInfo = horaFin+":"+MinFin+":"+"00"
-        print("las horas de consulta serán desde: ",initialInfo," hasta: ", finalInfo)
+        print("las horas de consulta serán desde: ",initialInfo," hasta: ", finalInfo, "\n")
         Requerimiento=5
         t1 = time.process_time()
         catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo)
-        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo,Requerimiento)        
+        catalog2 = {"Caracs": catalog['Caracs']}
+        Requerimiento=4
+        generos = controller.getGeneros(catalog)
+        totalEvento = Requerimiento5(catalog,catalog2,Requerimiento,generos)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
+        print("Hay un total de " + str(totalEvento) + " reproducciones entre " + str(initialInfo) + " y " + str(finalInfo))
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print("Total Eventos Reproducción:",totalEvento)
         #print("Total Eventos Reproducción:",totalEvento1)
 
 
