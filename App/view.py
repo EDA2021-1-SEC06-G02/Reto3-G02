@@ -155,7 +155,7 @@ def PrintEventos():
     if(lt.size(catalog['EventosEscucha']) <=10):
         i = 1
         for elemento in lt.iterator(catalog['EventosEscucha']):
-            texto = elemento["id"]
+            texto = str(a) + "- " + "id: " + str(elemento["id"])
             for caracteristica in elemento:
                 if not(caracteristica == "instrumentalness"):
                     texto += ", " + str(elemento[caracteristica])
@@ -165,7 +165,7 @@ def PrintEventos():
         a = 1
         i = 1
         while i <= 5:
-            texto = str(a) + "- " + str((lt.getElement(catalog['EventosEscucha'],i))["id"])
+            texto = str(a) + "- " + "id: " + str((lt.getElement(catalog['EventosEscucha'],i))["id"])
             for caracteristica in lt.getElement(catalog['EventosEscucha'],i):
                 if not(lt.getElement(catalog['EventosEscucha'],i)["id"] == "instrumentalness"):
                     texto += ", " + str(caracteristica) + ": " + str(lt.getElement(catalog['EventosEscucha'],i)[caracteristica])
@@ -174,7 +174,7 @@ def PrintEventos():
             a += 1
         i = lt.size(catalog['EventosEscucha'])
         while i > (lt.size(catalog["EventosEscucha"])-5):
-            texto = str(a) + "- " + str((lt.getElement(catalog['EventosEscucha'],i))["id"])
+            texto = str(a) + "- " + "id: " + str((lt.getElement(catalog['EventosEscucha'],i))["id"])
             for caracteristica in lt.getElement(catalog['EventosEscucha'],i):
                 if not(lt.getElement(catalog['EventosEscucha'],i)["id"] == "instrumentalness"):
                     texto += ", " + str(caracteristica) + ": " + str(lt.getElement(catalog['EventosEscucha'],i)[caracteristica])
@@ -409,7 +409,8 @@ while True:
         t1 = time.process_time()
         catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo)
         print(catalog['Caracs'])
-        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo,Requerimiento)        t2 = time.process_time()
+        totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo,Requerimiento)        
+        t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
