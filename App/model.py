@@ -169,7 +169,6 @@ def CrearTablaTempos(MusicRecomender):
 
 def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
     MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
-    #MusicRecomender['ID'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareID)
     MusicRecomender['Caracs'] = om.newMap(omaptype='RBT', comparefunction=compareValues)
     i=1
     while i<=lt.size(MusicRecomender['EventosEscucha']):
