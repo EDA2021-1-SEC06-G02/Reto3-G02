@@ -289,7 +289,7 @@ def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
     lst = m.keySet(Eventos_unicos)
     totEvent = lt.size(lst)
     sizeTabla= lt.size(m.keySet(analyzer['Artists']))
-    if Requerimiento != 1:
+    if Requerimiento != 1 and Requerimiento!=5:
         lst = m.keySet(analyzer['Artists'])
         return totEvent,sizeTabla,lst
     return totEvent,sizeTabla,lst
