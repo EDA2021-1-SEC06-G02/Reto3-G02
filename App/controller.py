@@ -44,6 +44,7 @@ def loadData():
     input_file = csv.DictReader(open(File, encoding="utf-8"), delimiter=",")
     for Entry in input_file:
         model.addEventoEscucha(MusicRecomender, Entry)
+        model.addArtist(MusicRecomender, Entry)
     input_file = csv.DictReader(open(File2, encoding="utf-8"), delimiter=",")
     for Entry in input_file:
         model.addEventoEscucha2(MusicRecomender, Entry)
@@ -76,6 +77,9 @@ def getDatosGenero(analyzer, genero):
 
 def getGeneros(analyzer):
     return model.getGeneros(analyzer)
+
+def getPistas(analyzer):
+    return model.getPistas(analyzer)
 
 def EventosEscuchaSize(MusicRecomender):
     return model.EventosEscuchaSize(MusicRecomender)

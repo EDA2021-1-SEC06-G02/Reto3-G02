@@ -145,9 +145,43 @@ def Requerimiento4(catalog,Requerimiento,CaracContenido):
     print("Total de reproducciones de todos los generos: "+str(total_eventos))
 
 def printDatosCargados():
-    """print("___Se cargaron___")
+    print("___Se cargaron___")
     print("} " + str(lt.size(catalog["EventosEscucha"])) + " eventos de escucha.")
-    print("} " + str(lt.size(catalog["Artists"])) + " artistas unicos.")"""
+    print("} " + str(lt.size(catalog["Artists"])) + " artistas unicos.")
+    print("} " + str(lt.size(controller.getPistas(catalog))) + " pistas unicas.")
+    PrintEventos()
+
+def PrintEventos():
+    if(lt.size(catalog['EventosEscucha']) <=10):
+        i = 1
+        for elemento in lt.iterator(catalog['EventosEscucha']):
+            texto = elemento["id"]
+            for caracteristica in elemento:
+                if not(caracteristica == "instrumentalness"):
+                    texto += ", " + str(elemento[caracteristica])
+            print(texto)
+            i += 1
+    else:
+        a = 1
+        i = 1
+        while i <= 5:
+            texto = str(a) + "- " + str((lt.getElement(catalog['EventosEscucha'],i))["id"])
+            for caracteristica in lt.getElement(catalog['EventosEscucha'],i):
+                if not(lt.getElement(catalog['EventosEscucha'],i)["id"] == "instrumentalness"):
+                    texto += ", " + str(caracteristica) + ": " + str(lt.getElement(catalog['EventosEscucha'],i)[caracteristica])
+            print(texto)
+            i += 1
+            a += 1
+        i = lt.size(catalog['EventosEscucha'])
+        while i > (lt.size(catalog["EventosEscucha"])-5):
+            texto = str(a) + "- " + str((lt.getElement(catalog['EventosEscucha'],i))["id"])
+            for caracteristica in lt.getElement(catalog['EventosEscucha'],i):
+                if not(lt.getElement(catalog['EventosEscucha'],i)["id"] == "instrumentalness"):
+                    texto += ", " + str(caracteristica) + ": " + str(lt.getElement(catalog['EventosEscucha'],i)[caracteristica])
+            print(texto)
+            i -= 1
+            a += 1
+        print(" ")
 
 def printPistas(lista, Requerimiento):
     formato_1 = "Track {}: {} con instrumentalness de {} y tempo de {}"
@@ -273,7 +307,7 @@ while True:
         time_mseg = (t2 - t1)*1000
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print("Total Eventos Unicos:",totalEvento)
+        print("Total Tracks Unicos:",totalEvento)
         print("----Tracks---")
         printPistas(lista,Requerimiento)
 
@@ -294,7 +328,7 @@ while True:
         time_mseg = (t2 - t1)*1000
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print("Total Eventos Unicos:",totalEvento)
+        print("Total Tracks Unicos:",totalEvento)
         print("----Tracks---")
         printPistas(lista,Requerimiento)
 

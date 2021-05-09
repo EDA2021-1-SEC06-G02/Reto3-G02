@@ -43,8 +43,10 @@ los mismos.
 # Funciones para creacion de datos
 
 def newMusicRecomender():
-    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'TempoGeneros':None, 'SentimentsValues':None, 'Hashtags': None}
+    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'Pistas':None, 'TempoGeneros':None, 'SentimentsValues':None, 'Hashtags': None}
+    MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
+    MusicRecomender['Pistas'] = m.newMap(numelements=32000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
     MusicRecomender['Hashtags'] = om.newMap(omaptype='RBT', comparefunction=compareDates)
     MusicRecomender['SentimentsValues'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
 
@@ -74,6 +76,7 @@ def newIDEntry(id):
 
 def addEventoEscucha(MusicRecomender, EventoEscucha):
     lt.addLast(MusicRecomender['EventosEscucha'], EventoEscucha)
+    m.put(MusicRecomender['Pistas'],EventoEscucha['track_id'],EventoEscucha)
     return MusicRecomender
 
 def addEventoEscucha2(MusicRecomender, HashtagsEventos):
@@ -98,6 +101,10 @@ def addEventoEscucha3(MusicRecomender, SentimentsData):
         m.put(MusicRecomender['SentimentsValues'], Hashtag, Hash)
     lt.addLast(Hash['ValuesHastags'], SentimentsData)
     return MusicRecomender
+
+def addArtist(MusicRecomender, Entry):
+    artist = Entry['artist_id']
+    m.put(MusicRecomender['Artists'],artist,Entry)
 
 def newSentimentsValues(name):
     Values = {"ValuesHastags": None}
@@ -267,16 +274,21 @@ def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
     if Requerimiento==5:
         initialInfo = ConvertLimits(initialInfo)
         finalInfo = ConvertLimits(finalInfo)
+    Eventos_unicos = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
     totEvent = 0
     for lstEvent in lt.iterator(lst):
-        totEvent += lt.size(lstEvent['lstEvent'])          
+        for Event in lt.iterator(lstEvent['lstEvent']):
+            llave = Event["track_id"].strip() + "," + Event["user_id"].strip() + "," + Event["created_at"].strip()
+            m.put(Eventos_unicos,llave,Event)
+    lst = m.keySet(Eventos_unicos)
+    totEvent = lt.size(lst)
     sizeTabla= lt.size(m.keySet(analyzer['Artists']))
     if Requerimiento != 1:
         lst = m.keySet(analyzer['Artists'])
         return totEvent,sizeTabla,lst
     return totEvent,sizeTabla,lst
-
+ 
 def getEventosByRange2(analyzer, initialInfo, finalInfo):
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
     lista1 = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
@@ -296,6 +308,10 @@ def getDatosGenero(analyzer, genero):
 
 def getGeneros(analyzer):
     generos = m.keySet(analyzer["TempoGeneros"])
+
+def getPistas(analyzer):
+    pistas = m.keySet(analyzer["Pistas"])
+    return pistas
 
 def Requerimiento5(catalog,Requerimiento):
     pass
