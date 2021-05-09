@@ -408,14 +408,13 @@ while True:
         Requerimiento=5
         t1 = time.process_time()
         catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo)
-        print(catalog['Caracs'])
         totalEvento,totalArtist,lista = controller.getEventosEscuchaByRange(catalog, initialInfo, finalInfo,Requerimiento)        
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
         print("Total Eventos Reproducción:",totalEvento)
-        print("Total Eventos Reproducción:",totalEvento1)
+        #print("Total Eventos Reproducción:",totalEvento1)
 
 
     else:
