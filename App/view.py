@@ -427,8 +427,8 @@ while True:
         t1 = time.process_time()
         catalog = controller.addData(catalog,Requerimiento,initialInfo,finalInfo)
         catalog2 = {"Caracs": catalog['Caracs']}
-        Requerimiento=4
         generos = controller.getGeneros(catalog)
+        Requerimiento=4
         totalEvento = Requerimiento5(catalog,catalog2,Requerimiento,generos)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000

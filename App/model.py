@@ -43,7 +43,7 @@ los mismos.
 # Funciones para creacion de datos
 
 def newMusicRecomender():
-    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'Pistas':None, 'TempoGeneros':None, 'SentimentsValues':None, 'Hashtags': None}
+    MusicRecomender = {'EventosEscucha': None, 'Carac': None, 'Artists':None, 'Pistas':None, 'TempoGeneros':None, 'TempoGeneros2':None, 'SentimentsValues':None, 'Hashtags': None}
     MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
     MusicRecomender['EventosEscucha'] = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
     MusicRecomender['Pistas'] = m.newMap(numelements=32000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
@@ -129,43 +129,50 @@ def newTrackInfoEntry(HashtagsEventos):
     return TrackInfoEntry
 
 def CrearTablaTempos(MusicRecomender):
-    MusicRecomender['TempoGeneros']= m.newMap(numelements=9, maptype='CHAINING', loadfactor=4.0, comparefunction=compareGenero)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,60)
-    lt.addLast(tempo_lst,90)
-    m.put(MusicRecomender['TempoGeneros'],"reggae",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,70)
-    lt.addLast(tempo_lst,100)
-    m.put(MusicRecomender['TempoGeneros'],"down-tempo",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,90)
-    lt.addLast(tempo_lst,120)
-    m.put(MusicRecomender['TempoGeneros'],"chill-out",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,85)
-    lt.addLast(tempo_lst,115)
-    m.put(MusicRecomender['TempoGeneros'],"hip-hop",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,120)
-    lt.addLast(tempo_lst,125)
-    m.put(MusicRecomender['TempoGeneros'],"jazz and funk",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,100)
-    lt.addLast(tempo_lst,130)
-    m.put(MusicRecomender['TempoGeneros'],"pop",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,60)
-    lt.addLast(tempo_lst,80)
-    m.put(MusicRecomender['TempoGeneros'],"r&b",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,110)
-    lt.addLast(tempo_lst,140)
-    m.put(MusicRecomender['TempoGeneros'],"rock",tempo_lst)
-    tempo_lst = lt.newList('ARRAY_LIST')
-    lt.addLast(tempo_lst,100)
-    lt.addLast(tempo_lst,160)
-    m.put(MusicRecomender['TempoGeneros'],"metal",tempo_lst)
+    i = 0
+    while i < 2:
+        if i == 0:
+            llave = 'TempoGeneros'
+        else:
+            llave = 'TempoGeneros2'
+        MusicRecomender[llave]= m.newMap(numelements=9, maptype='CHAINING', loadfactor=4.0, comparefunction=compareGenero)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,60)
+        lt.addLast(tempo_lst,90)
+        m.put(MusicRecomender[llave],"reggae",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,70)
+        lt.addLast(tempo_lst,100)
+        m.put(MusicRecomender[llave],"down-tempo",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,90)
+        lt.addLast(tempo_lst,120)
+        m.put(MusicRecomender[llave],"chill-out",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,85)
+        lt.addLast(tempo_lst,115)
+        m.put(MusicRecomender[llave],"hip-hop",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,120)
+        lt.addLast(tempo_lst,125)
+        m.put(MusicRecomender[llave],"jazz and funk",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,100)
+        lt.addLast(tempo_lst,130)
+        m.put(MusicRecomender[llave],"pop",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,60)
+        lt.addLast(tempo_lst,80)
+        m.put(MusicRecomender[llave],"r&b",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,110)
+        lt.addLast(tempo_lst,140)
+        m.put(MusicRecomender[llave],"rock",tempo_lst)
+        tempo_lst = lt.newList('ARRAY_LIST')
+        lt.addLast(tempo_lst,100)
+        lt.addLast(tempo_lst,160)
+        m.put(MusicRecomender[llave],"metal",tempo_lst)
+        i += 1
 
 def addEventosRBT(MusicRecomender,Requerimiento,tipoCaraCont,limInf,limSup):
     MusicRecomender['Artists'] = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
@@ -305,7 +312,7 @@ def getDatosGenero(analyzer, genero):
     return me.getValue(tempo_genero)
 
 def getGeneros(analyzer):
-    generos = m.keySet(analyzer["TempoGeneros"])
+    generos = m.keySet(analyzer["TempoGeneros2"])
     return generos
 
 def getPistas(analyzer):
