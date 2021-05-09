@@ -31,6 +31,7 @@ from DISClib.ADT import map as m
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import mergesort as Merge
 assert cf
 
 """
@@ -68,8 +69,8 @@ def newArtistEntry(id):
     return Arentry
 
 def newIDEntry(id):
-    IDentry = {'EventId': None}
-    IDentry['EventId'] = id
+    IDentry = {'LstEvent':None}
+    IDentry['LstEvent'] = lt.newList('ARRAY_LIST')
     return IDentry
 
 # Funciones para agregar informacion al catalogo
@@ -246,10 +247,13 @@ def addEventIndex(Artists,EventEntry,EventoEscucha):
     return EventEntry
 
 def addIDUniqueEvent(MapID,EventoEscucha):
-    IDentry = m.get(MapID, EventoEscucha['id'])
+    IDentry = m.get(MapID, EventoEscucha['track_id'])
     if (IDentry is None):
-        entry = newIDEntry(EventoEscucha['id'])
-        m.put(MapID, EventoEscucha['id'], entry)
+        entry = newIDEntry(EventoEscucha['track_id'])
+    else:
+        entry=me.getValue(IDentry)
+    lt.addLast(entry['LstEvent'],EventoEscucha)
+    m.put(MapID, EventoEscucha['track_id'], entry)
 
 # Funciones de consulta
 
@@ -275,7 +279,7 @@ def maxKey(analyzer):
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
-def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
+def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento,RequerimientoTrue):
     if Requerimiento==5:
         initialInfo = ConvertLimits(initialInfo)
         finalInfo = ConvertLimits(finalInfo)
@@ -289,9 +293,11 @@ def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
     lst = m.keySet(Eventos_unicos)
     totEvent = lt.size(lst)
     sizeTabla= lt.size(m.keySet(analyzer['Artists']))
-    if Requerimiento != 1 and Requerimiento!=5:
+    if Requerimiento != 1 and not(RequerimientoTrue==5):
         lst = m.keySet(analyzer['Artists'])
         return totEvent,sizeTabla,lst
+    if RequerimientoTrue==5:
+        lst = Eventos_unicos
     return totEvent,sizeTabla,lst
  
 def getEventosByRange2(analyzer, initialInfo, finalInfo):
@@ -337,12 +343,48 @@ def ConvertLimits(lim):
     horaFin=horaSeg+minSeg+(int(horas[2]))
     return horaFin
 
+def Requerimiento5_2(lista,Catalog):
+    TracksUnique = lt.newList('ARRAY_LIST',cmpfunction=compareIds2)
+    i = 1
+    while i < lt.size(lista):
+        obj = lt.getElement(lista,i)
+        track = obj.split(",")[0]
+        if not(lt.isPresent(TracksUnique,track)>0):
+            lt.addLast(TracksUnique,track)
+        i+=1
+    return TracksUnique
+
+def cosas(RequerimientoTrue,Event):
+    if RequerimientoTrue==5:
+        TracksUnique = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareID)
+    if RequerimientoTrue==5:
+                addIDUniqueEvent(TracksUnique,Event)
+    pass
+
 # Funciones de ordenamiento
+
+def OrdenarGeneros(ordenes):
+    ordenes=OrdenSimple(ordenes)
+    return ordenes
+
+def OrdenSimple(listaOrdenada):
+    sub_list = lt.subList(listaOrdenada, 0, lt.size(listaOrdenada))
+    sub_list = sub_list.copy()
+    sorted_list = sa.sort(sub_list, cmpNums)
+    return sorted_list
 
 #Funciones de comparacion
 
+def cmpNums(num1, num2):
+    return (num1[1] > num2[1])
+
 def compareIds(ID,Lista):
     if (ID.lower() in Lista['track_id'].lower()):
+        return 0
+    return -1
+
+def compareIds2(ID,Lista):
+    if (ID in Lista):
         return 0
     return -1
 

@@ -66,8 +66,8 @@ def addNuevoGenero(catalog,nombre,Min,Max):
 
 # Funciones de consulta sobre el catálogo
 
-def getEventosEscuchaByRange(analyzer, initialInfo, finalInfo, Requerimiento=1):
-    return model.getEventosByRange(analyzer,initialInfo,finalInfo,Requerimiento)
+def getEventosEscuchaByRange(analyzer, initialInfo, finalInfo, Requerimiento=1,RequerimientoTrue=1):
+    return model.getEventosByRange(analyzer,initialInfo,finalInfo,Requerimiento,RequerimientoTrue)
 
 def getEventosEscuchaByRange2(analyzer, initialInfo, finalInfo):
     return model.getEventosByRange2(analyzer,initialInfo,finalInfo)
@@ -77,6 +77,9 @@ def getDatosGenero(analyzer, genero):
 
 def getGeneros(analyzer):
     return model.getGeneros(analyzer)
+
+def OrdenarGeneros(ordenes):
+    return model.OrdenarGeneros(ordenes)
 
 def getPistas(analyzer):
     return model.getPistas(analyzer)
@@ -93,6 +96,9 @@ def indexSize(MusicRecomender):
 
 def Requerimiento5(catalog,Requerimiento):
     model.Requerimiento5(catalog,Requerimiento)
+
+def Requerimiento5_2(lista,Catalog):
+    return model.Requerimiento5_2(lista,Catalog)
 
 def minKey(MusicRecomender):
     return model.minKey(MusicRecomender)

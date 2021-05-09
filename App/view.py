@@ -25,6 +25,9 @@ import sys
 import controller
 import random as ran
 from DISClib.ADT import list as lt
+from DISClib.ADT import map as m
+from DISClib.ADT import orderedmap as om
+from DISClib.DataStructures import mapentry as me
 import time
 assert cf
 
@@ -146,16 +149,34 @@ def Requerimiento4(catalog,Requerimiento,CaracContenido):
 
 def Requerimiento5(catalog,catalog2,Requerimiento,Generos):
     total_eventos = 0
+    mayor = 0
+    DatosMayor = {}
     i=1
     print(" ")
+    ordenes = lt.newList('ARRAY_LIST')
     while i<= lt.size(Generos):
         genero = lt.getElement(Generos,i).strip()
         Min,Max=ValoresGeneros(catalog,genero)
+        Requerimiento=4
         catalog = controller.addData2(catalog,catalog2,Requerimiento,Min,Max,"tempo")
-        totalEvento,TotalArtist,lista = controller.getEventosEscuchaByRange(catalog, Min, Max,Requerimiento)
-        total_eventos += totalEvento 
-        printGenero(i,genero,totalEvento)
+        RequerimientoTrue=5
+        totalEvento,TotalArtist,lista = controller.getEventosEscuchaByRange(catalog, Min, Max,Requerimiento,RequerimientoTrue)
+        total_eventos += totalEvento
+        if totalEvento>mayor:
+            DatosMayor=lista
+            mayor=totalEvento
         i+=1
+        info=(genero,totalEvento)
+        lt.addLast(ordenes,info)
+    ordenes=controller.OrdenarGeneros(ordenes)
+    j=1
+    while j<lt.size(ordenes):
+        datos = lt.getElement(ordenes,j)
+        printGenero(j,datos[0],datos[1])
+        j+=1
+    lista = m.keySet(DatosMayor)
+    h = controller.Requerimiento5_2(lista,catalog)
+    print(lt.size(h))
     return total_eventos
 
 def printDatosCargados():
@@ -169,7 +190,7 @@ def PrintEventos():
     if(lt.size(catalog['EventosEscucha']) <=10):
         i = 1
         for elemento in lt.iterator(catalog['EventosEscucha']):
-            texto = str(a) + "- " + "id: " + str(elemento["id"])
+            texto = str(i) + "- " + "id: " + str(elemento["id"])
             for caracteristica in elemento:
                 if not(caracteristica == "instrumentalness"):
                     texto += ", " + str(elemento[caracteristica])
