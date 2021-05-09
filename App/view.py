@@ -307,7 +307,7 @@ while True:
         time_mseg = (t2 - t1)*1000
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print("Total Eventos Unicos:",totalEvento)
+        print("Total Tracks Unicos:",totalEvento)
         print("----Tracks---")
         printPistas(lista,Requerimiento)
 
@@ -328,7 +328,7 @@ while True:
         time_mseg = (t2 - t1)*1000
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        print("Total Eventos Unicos:",totalEvento)
+        print("Total Tracks Unicos:",totalEvento)
         print("----Tracks---")
         printPistas(lista,Requerimiento)
 

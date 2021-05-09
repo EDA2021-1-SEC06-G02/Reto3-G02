@@ -263,16 +263,21 @@ def maxKey(analyzer):
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento=1):
+    Eventos_unicos = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
     totEvent = 0
     for lstEvent in lt.iterator(lst):
-        totEvent += lt.size(lstEvent['lstEvent'])          
+        for Event in lt.iterator(lstEvent['lstEvent']):
+            llave = Event["track_id"].strip() + "," + Event["user_id"].strip() + "," + Event["created_at"].strip()
+            m.put(Eventos_unicos,llave,Event)
+    lst = m.keySet(Eventos_unicos)
+    totEvent = lt.size(lst)
     sizeTabla= lt.size(m.keySet(analyzer['Artists']))
     if Requerimiento != 1:
         lst = m.keySet(analyzer['Artists'])
         return totEvent,sizeTabla,lst
     return totEvent,sizeTabla,lst
-
+ 
 def getEventosByRange2(analyzer, initialInfo, finalInfo):
     lst = om.values(analyzer['Caracs'], initialInfo, finalInfo)
     lista1 = lt.newList('ARRAY_LIST', cmpfunction=compareIds)
