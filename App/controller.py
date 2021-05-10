@@ -97,8 +97,8 @@ def indexSize(MusicRecomender):
 def Requerimiento5(catalog,Requerimiento):
     model.Requerimiento5(catalog,Requerimiento)
 
-def Requerimiento5_2(lista,Catalog):
-    return model.Requerimiento5_2(lista,Catalog)
+def Requerimiento5_2(lista,Catalog,initialInfo,finalInfo):
+    return model.Requerimiento5_2(lista,Catalog,initialInfo,finalInfo)
 
 def minKey(MusicRecomender):
     return model.minKey(MusicRecomender)

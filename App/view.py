@@ -147,10 +147,11 @@ def Requerimiento4(catalog,Requerimiento,CaracContenido):
         i+=1
     print("Total de reproducciones de todos los generos: "+str(total_eventos))
 
-def Requerimiento5(catalog,catalog2,Requerimiento,Generos):
+def Requerimiento5(catalog,catalog2,Requerimiento,Generos,initialInfo,finalInfo):
     total_eventos = 0
     mayor = 0
     DatosMayor = {}
+    infoMayor = 0
     i=1
     print(" ")
     ordenes = lt.newList('ARRAY_LIST')
@@ -169,14 +170,22 @@ def Requerimiento5(catalog,catalog2,Requerimiento,Generos):
         info=(genero,totalEvento)
         lt.addLast(ordenes,info)
     ordenes=controller.OrdenarGeneros(ordenes)
-    j=1
-    while j<lt.size(ordenes):
-        datos = lt.getElement(ordenes,j)
-        printGenero(j,datos[0],datos[1])
-        j+=1
-    lista = m.keySet(DatosMayor)
-    h = controller.Requerimiento5_2(lista,catalog)
-    print(lt.size(h))
+    i=1
+    while i<lt.size(ordenes):
+        datos = lt.getElement(ordenes,i)
+        if i==1:
+            infoMayor=datos
+        printGenero(i,datos[0],datos[1])
+        i+=1
+    result,tot = controller.Requerimiento5_2(DatosMayor,catalog,initialInfo,finalInfo)
+    print(infoMayor[0]," tiene un total de: ",tot," tracks unicas")
+    i = 1
+    maximun=11
+    if lt.size(result)<10:
+        maximun=lt.size(result)
+    while i<maximun:
+        print("TOP ",i," track: ",lt.getElement(result,i)[0][0]," con ", lt.getElement(result,i)[1]," hashtags y un VADER = ",lt.getElement(result,i)[0][1])
+        i+=1
     return total_eventos
 
 def printDatosCargados():
@@ -450,13 +459,12 @@ while True:
         catalog2 = {"Caracs": catalog['Caracs']}
         generos = controller.getGeneros(catalog)
         Requerimiento=4
-        totalEvento = Requerimiento5(catalog,catalog2,Requerimiento,generos)
+        totalEvento = Requerimiento5(catalog,catalog2,Requerimiento,generos,initialInfo,finalInfo)
         t2 = time.process_time()
         time_mseg = (t2 - t1)*1000
         print("Hay un total de " + str(totalEvento) + " reproducciones entre " + str(initialInfo) + " y " + str(finalInfo))
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
-        #print("Total Eventos Reproducción:",totalEvento1)
 
 
     else:

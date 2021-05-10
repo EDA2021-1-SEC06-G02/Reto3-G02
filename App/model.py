@@ -68,7 +68,7 @@ def newArtistEntry(id):
     Arentry['ArtistId'] = id
     return Arentry
 
-def newIDEntry(id):
+def newIDEntry():
     IDentry = {'LstEvent':None}
     IDentry['LstEvent'] = lt.newList('ARRAY_LIST')
     return IDentry
@@ -84,7 +84,8 @@ def addEventoEscucha2(MusicRecomender, HashtagsEventos):
     DateKey=CreateDate(HashtagsEventos['created_at'])
     entry = om.get(MusicRecomender['Hashtags'], DateKey)
     if entry is None:
-        HashEntry = newHashtagEntry()
+        #HashEntry = newHashtagEntry()
+        HashEntry = newIDEntry()
     else:
         HashEntry = me.getValue(entry)
     addHashtagInfo(HashEntry, HashtagsEventos)
@@ -113,15 +114,17 @@ def newSentimentsValues(name):
     return Values
 
 
-def addHashtagInfo(HashEntry, HashtagsEventos):
-    Trackentry = m.get(HashEntry['TracksID'], HashtagsEventos['track_id'])
-    if (Trackentry is None):
-        entry = newTrackInfoEntry(HashtagsEventos)
-    else:
-        entry = me.getValue(Trackentry)
-        lt.addLast(entry['lstHashtags'],HashtagsEventos['hashtag'])
-    m.put(HashEntry['TracksID'], HashtagsEventos['track_id'], entry)
-    return Trackentry
+def addHashtagInfo(hashEntry2, HashtagsEventos):
+    lista = hashEntry2['LstEvent']
+    lt.addLast(lista,HashtagsEventos)
+    #Trackentry = m.get(HashEntry['TracksID'], HashtagsEventos['track_id'])
+    #if (Trackentry is None):
+    #    entry = newTrackInfoEntry(HashtagsEventos)
+    #else:
+    #    entry = me.getValue(Trackentry)
+    #    lt.addLast(entry['lstHashtags'],HashtagsEventos['hashtag'])
+    #m.put(HashEntry['TracksID'], HashtagsEventos['track_id'], entry)
+    return hashEntry2
 
 def newTrackInfoEntry(HashtagsEventos):
     TrackInfoEntry = {'lstHashtags':None}
@@ -246,14 +249,14 @@ def addEventIndex(Artists,EventEntry,EventoEscucha):
         m.put(Artists, EventoEscucha['artist_id'], entry)
     return EventEntry
 
-def addIDUniqueEvent(MapID,EventoEscucha):
-    IDentry = m.get(MapID, EventoEscucha['track_id'])
+def addIDUniqueEvent(MapID,Key,EventoEscucha):
+    IDentry = m.get(MapID, Key)
     if (IDentry is None):
-        entry = newIDEntry(EventoEscucha['track_id'])
+        entry = newIDEntry()
     else:
         entry=me.getValue(IDentry)
     lt.addLast(entry['LstEvent'],EventoEscucha)
-    m.put(MapID, EventoEscucha['track_id'], entry)
+    m.put(MapID, Key, entry)
 
 # Funciones de consulta
 
@@ -299,6 +302,18 @@ def getEventosByRange(analyzer, initialInfo, finalInfo,Requerimiento,Requerimien
     if RequerimientoTrue==5:
         lst = Eventos_unicos
     return totEvent,sizeTabla,lst
+
+def getEventosByRangeUser_Track_Doc(analyzer, initialInfo, finalInfo):
+    initialInfo = ConvertLimits(initialInfo)
+    finalInfo = ConvertLimits(finalInfo)
+    Eventos_unicos = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareHashTag)
+    lst = om.values(analyzer['Hashtags'], initialInfo, finalInfo)
+    for lstEvent in lt.iterator(lst):
+        for Event in lt.iterator(lstEvent['LstEvent']):
+            llave = Event["track_id"].strip() + "," + Event["user_id"].strip() + "," + Event["created_at"].strip()
+            m.put(Eventos_unicos,llave,Event)
+    lst = Eventos_unicos
+    return lst
  
 def getEventosByRange2(analyzer, initialInfo, finalInfo):
     Mapa = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareArtist)
@@ -343,23 +358,64 @@ def ConvertLimits(lim):
     horaFin=horaSeg+minSeg+(int(horas[2]))
     return horaFin
 
-def Requerimiento5_2(lista,Catalog):
-    TracksUnique = lt.newList('ARRAY_LIST',cmpfunction=compareIds2)
-    i = 1
-    while i < lt.size(lista):
-        obj = lt.getElement(lista,i)
-        track = obj.split(",")[0]
-        if not(lt.isPresent(TracksUnique,track)>0):
-            lt.addLast(TracksUnique,track)
-        i+=1
-    return TracksUnique
+def addIDUniqueEvent5(MapID,Key,EventoEscucha,HahsTags,Catalog):
+    IDentry = m.get(MapID, Key)
+    if (IDentry is None):
+        entry = newIDEntry5()
+    else:
+        entry=me.getValue(IDentry)
+    lt.addLast(entry['lstEvent'],EventoEscucha)
+    if not(lt.isPresent(entry['HashTags'],HahsTags['hashtag'])>0):
+        SentimentEntry = m.get(Catalog['SentimentsValues'],HahsTags['hashtag'])
+        if not(SentimentEntry is None):
+            SenEntry=me.getValue(SentimentEntry)
+            Average = lt.getElement(SenEntry['ValuesHastags'],1)['vader_avg']
+            if not(Average==""):
+                entry['SumAverage'] = entry['SumAverage'] + float(Average)
+                lt.addLast(entry['HashTags'],HahsTags['hashtag'])
+    m.put(MapID, Key, entry)
 
-def cosas(RequerimientoTrue,Event):
-    if RequerimientoTrue==5:
-        TracksUnique = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareID)
-    if RequerimientoTrue==5:
-                addIDUniqueEvent(TracksUnique,Event)
-    pass
+def newIDEntry5():
+    IDentry = {'lstEvent':None,'HashTags':None,'SumAverage':int}
+    IDentry['lstEvent'] = lt.newList('ARRAY_LIST')
+    IDentry['HashTags'] = lt.newList('ARRAY_LIST',cmpfunction=cmpHashTags)
+    IDentry['SumAverage'] = 0
+    return IDentry
+
+def Requerimiento5_2(lista,Catalog,initialInfo,finalInfo):
+    ListArchivoUser = getEventosByRangeUser_Track_Doc(Catalog,initialInfo,finalInfo)
+    TracksUnique = m.newMap(numelements=5000, maptype='CHAINING', loadfactor=4.0, comparefunction=compareID)
+    listaLlaves = m.keySet(lista)
+    i = 1
+    while i < lt.size(listaLlaves):
+        obj = lt.getElement(listaLlaves,i)
+        track = obj.split(",")[0]
+        Event = m.get(lista,obj)
+        Event = me.getValue(Event)
+        HashTags = m.get(ListArchivoUser,obj)
+        if not(HashTags is None):
+            HashTags = me.getValue(HashTags)
+        addIDUniqueEvent5(TracksUnique,track,Event,HashTags,Catalog)
+        i+=1
+    listaLlaves = m.keySet(TracksUnique)
+    i = 1
+    Result = lt.newList('ARRAY_LIST',cmpfunction=cmpNums)
+    while i<lt.size(listaLlaves):
+        track = lt.getElement(listaLlaves,i)
+        i+=1
+        info = m.get(TracksUnique,track)
+        info = me.getValue(info)
+        NumHash = lt.size(info['HashTags'])
+        Sum = info['SumAverage']
+        try:
+            Average = round((Sum/NumHash),1)
+        except:
+            Average=0
+        respuesta = ((track,Average),NumHash)
+        lt.addLast(Result,respuesta)
+    Result = OrdenSimple(Result)
+    Tot = lt.size(m.keySet(TracksUnique))
+    return Result,Tot
 
 # Funciones de ordenamiento
 
@@ -385,6 +441,11 @@ def compareIds(ID,Lista):
 
 def compareIds2(ID,Lista):
     if (ID in Lista):
+        return 0
+    return -1
+
+def cmpHashTags(Hash,Lista):
+    if (Hash in Lista):
         return 0
     return -1
 
