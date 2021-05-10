@@ -366,20 +366,22 @@ def addIDUniqueEvent5(MapID,Key,EventoEscucha,HahsTags,Catalog):
         entry=me.getValue(IDentry)
     lt.addLast(entry['lstEvent'],EventoEscucha)
     if not(lt.isPresent(entry['HashTags'],HahsTags['hashtag'])>0):
+        lt.addLast(entry['HashTags'],HahsTags['hashtag'])
         SentimentEntry = m.get(Catalog['SentimentsValues'],HahsTags['hashtag'])
         if not(SentimentEntry is None):
             SenEntry=me.getValue(SentimentEntry)
             Average = lt.getElement(SenEntry['ValuesHastags'],1)['vader_avg']
             if not(Average==""):
                 entry['SumAverage'] = entry['SumAverage'] + float(Average)
-                lt.addLast(entry['HashTags'],HahsTags['hashtag'])
+                entry['TotConteo'] = entry['TotConteo'] + 1
     m.put(MapID, Key, entry)
 
 def newIDEntry5():
-    IDentry = {'lstEvent':None,'HashTags':None,'SumAverage':int}
+    IDentry = {'lstEvent':None,'HashTags':None,'SumAverage':int,'TotConteo':int}
     IDentry['lstEvent'] = lt.newList('ARRAY_LIST')
     IDentry['HashTags'] = lt.newList('ARRAY_LIST',cmpfunction=cmpHashTags)
     IDentry['SumAverage'] = 0
+    IDentry['TotConteo'] = 0
     return IDentry
 
 def Requerimiento5_2(lista,Catalog,initialInfo,finalInfo):
@@ -406,13 +408,15 @@ def Requerimiento5_2(lista,Catalog,initialInfo,finalInfo):
         info = m.get(TracksUnique,track)
         info = me.getValue(info)
         NumHash = lt.size(info['HashTags'])
+        totparasuma = info['TotConteo']
         Sum = info['SumAverage']
-        try:
-            Average = round((Sum/NumHash),1)
-        except:
-            Average=0
-        respuesta = ((track,Average),NumHash)
-        lt.addLast(Result,respuesta)
+        if not(totparasuma == 0):
+            try:
+                Average = round((Sum/totparasuma),1)
+            except:
+                Average=0
+            respuesta = ((track,Average),NumHash)
+            lt.addLast(Result,respuesta)
     Result = OrdenSimple(Result)
     Tot = lt.size(m.keySet(TracksUnique))
     return Result,Tot
@@ -426,7 +430,7 @@ def OrdenarGeneros(ordenes):
 def OrdenSimple(listaOrdenada):
     sub_list = lt.subList(listaOrdenada, 0, lt.size(listaOrdenada))
     sub_list = sub_list.copy()
-    sorted_list = sa.sort(sub_list, cmpNums)
+    sorted_list = Merge.sort(sub_list, cmpNums)
     return sorted_list
 
 #Funciones de comparacion

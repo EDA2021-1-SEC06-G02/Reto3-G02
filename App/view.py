@@ -466,7 +466,6 @@ while True:
         print(" ")
         print ("Tiempo de ejecucion: ",time_mseg," milisegundos.")
 
-
     else:
         print("\nApagando el sistema...")
         print("Hasta luego\n")
